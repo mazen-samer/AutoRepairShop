@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Invoice</title>
+    <link rel="stylesheet" href="/css/Purchase Invoice.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header with Buttons -->
+        <div class="header">
+            <button class="back-btn" onclick="window.location.href='/pages/Inventory Control.html'">Back</button>
+            <h2>Purchase Invoice</h2>
+            <button class="home-btn" onclick="window.location.href='/pages/home.html'">Home Page</button>
+        </div>
+
+        <form class="invoice-form">
+            <!-- Invoice Details -->
+            <div class="section">
+                <h3>Invoice Details</h3>
+                <label for="invoice-number">Invoice Number:</label>
+                <input type="text" id="invoice-number" placeholder="Auto-generated" disabled>
+                <label for="invoice-date">Invoice Date:</label>
+                <input type="date" id="invoice-date">
+                <label for="supplier">Supplier:</label>
+                <input type="text" id="supplier" placeholder="Search supplier">
+                <label for="payment-method">Payment Method:</label>
+                <select id="payment-method">
+                    <option>Cash</option>
+                    <option>Credit</option>
+                    <option>Bank Transfer</option>
+                </select>
+            </div>
+            
+            <!-- Product List -->
+            <div class="section">
+    <h3>Products</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="product-list">
+            <tr>
+                <td>
+                    <select>
+                        <option disabled selected>Select Product</option>
+                        <option>Product A</option>
+                        <option>Product B</option>
+                        <option>Inspection</option>
+                    </select>
+                </td>
+                <td><input type="number" min="1" value="1"></td>
+                <td><input type="number" min="0" step="0.01"></td>
+                <td class="total-price">$0.00</td>
+                <td><button type="button" class="remove">❌</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <button type="button" class="add-product">+ Add Product</button>
+</div>
+
+            
+            <!-- Invoice Summary -->
+            <div class="section summary">
+                <h3>Summary</h3>
+                <label for="subtotal">Subtotal:</label>
+                <span id="subtotal">$0.00</span>
+                <label for="tax">Tax:</label>
+                <input type="number" id="tax" min="0" step="0.01" placeholder="Tax %">
+                <label for="total">Total:</label>
+                <span id="total">$0.00</span>
+            </div>
+            
+            <div class="buttons">
+                <button type="submit" class="save">Save Invoice</button>
+                <button type="button" class="print">Print</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

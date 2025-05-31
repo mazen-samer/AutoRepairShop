@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Instructions</title>
+    <link rel="stylesheet" href="/css/WorhShop/Add Information For The Technician.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header with Buttons -->
+        <div class="header">
+            <button class="back-btn" onclick="window.location.href='/pages/WorkShop/Workshop.html'">Back</button>
+            Add Instructions
+            <button class="home-btn" onclick="window.location.href='/pages/home.html'">Home Page</button>
+        </div>
+
+        <!-- Info Cards -->
+        <div class="info">
+    <div class="info-card">
+        <i class="fas fa-car"></i>
+        <h3>Car Plate</h3>
+        <p id="car-plate-display">-</p>
+    </div>
+    <div class="info-card">
+        <i class="fas fa-cogs"></i>
+        <h3>Customer Name</h3>
+        <p id="customer-name-display">-</p>
+    </div>
+    <div class="info-card">
+        <i class="fas fa-clock"></i>
+        <h3>Product / Service</h3>
+        <p id="product-display">-</p>
+    </div>
+</div>
+
+
+        <!-- Add Instructions Before Maintenance -->
+        <div class="input-group">
+            <label for="before-maintenance">Add Instructions Before Maintenance</label>
+            <textarea id="before-maintenance" placeholder="Enter instructions here..."></textarea>
+        </div>
+
+        <!-- Add Instructions During Maintenance -->
+        <div class="input-group">
+            <label for="during-maintenance">Add Instructions During Maintenance</label>
+            <textarea id="during-maintenance" placeholder="Enter instructions here..."></textarea>
+        </div>
+
+        <!-- Add Instructions After Maintenance -->
+        <div class="input-group">
+            <label for="after-maintenance">Add Instructions After Maintenance</label>
+            <textarea id="after-maintenance" placeholder="Enter instructions here..."></textarea>
+        </div>
+
+        <!-- Single Save Button -->
+        <div>
+            <button class="save-all-btn" onclick="saveAllInstructions()"> Save All Instructions</button>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function () {
+        const data = JSON.parse(localStorage.getItem("technicianData")) || {};
+        if (data.carPlate) {
+            document.getElementById("car-plate-display").textContent = data.carPlate;
+        }
+        if (data.customerName) {
+            document.getElementById("customer-name-display").textContent = data.customerName;
+        }
+        if (data.product) {
+            document.getElementById("product-display").textContent = data.product;
+        }
+    };
+
+        function saveAllInstructions() {
+        const before = document.getElementById("before-maintenance").value.trim();
+        const during = document.getElementById("during-maintenance").value.trim();
+        const after = document.getElementById("after-maintenance").value.trim();
+
+        const technicianData = JSON.parse(localStorage.getItem("technicianData")) || {};
+
+        technicianData.instructions = {
+            before,
+            during,
+            after
+        };
+
+        localStorage.setItem("technicianData", JSON.stringify(technicianData));
+        window.location.href = "/pages/WorkShop/Technician Screen.html";
+    }
+
+    window.onload = function () {
+        const data = JSON.parse(localStorage.getItem("technicianData")) || {};
+        if (data.carPlate) {
+            document.getElementById("car-plate-display").textContent = data.carPlate;
+        }
+        if (data.customerName) {
+            document.getElementById("customer-name-display").textContent = data.customerName;
+        }
+        if (data.product) {
+            document.getElementById("product-display").textContent = data.product;
+        }
+    };
+    </script>
+</body>
+</html>

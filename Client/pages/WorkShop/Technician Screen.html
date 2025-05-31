@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Technician Screen</title>
+    <link rel="stylesheet" href="/css/WorhShop/Technician Screen.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header with Buttons -->
+      <div class="header">
+        <button
+          class="back-btn"
+          onclick="window.location.href='/pages/WorkShop/Workshop.html'"
+        >
+          Back
+        </button>
+        Technician Dashboard
+        <button
+          class="home-btn"
+          onclick="window.location.href='/pages/home.html'"
+        >
+          Home Page
+        </button>
+      </div>
+
+      <!-- General Information -->
+      <div class="info">
+        <div class="info-card">
+          <i class="fas fa-car"></i>
+          <h3>Car Plate</h3>
+          <p id="tech-car-plate">-</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-cogs"></i>
+          <h3>Customer Name</h3>
+          <p id="tech-customer-name">-</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-clock"></i>
+          <h3>Product / Service</h3>
+          <p id="tech-product">-</p>
+        </div>
+      </div>
+
+      <!-- Engineer's Instructions -->
+      <div class="instructions">
+        <h2>Instructions from Engineer</h2>
+        <h3>Before Maintenance</h3>
+        <ul id="before-list">
+          <li>-</li>
+        </ul>
+        <h3>During Maintenance</h3>
+        <ul id="during-list">
+          <li>-</li>
+        </ul>
+        <h3>After Maintenance</h3>
+        <ul id="after-list">
+          <li>-</li>
+        </ul>
+      </div>
+
+      <!-- Maintenance Steps
+        <div class="steps">
+            <h2>Maintenance Steps</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Step</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Replace oil filter</td>
+                        <td>✅ Completed</td>
+                    </tr>
+                    <tr>
+                        <td>Inspect brakes</td>
+                        <td>🔄 In Progress</td>
+                    </tr>
+                    <tr>
+                        <td>Check coolant level</td>
+                        <td>⏳ Pending</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div> -->
+
+      <!-- Current Status -->
+    </div>
+
+    <script>
+      window.onload = function () {
+        const data = JSON.parse(localStorage.getItem("technicianData")) || {};
+
+        // عرض المعلومات العامة
+        document.getElementById("tech-car-plate").textContent =
+          data.carPlate || "-";
+        document.getElementById("tech-customer-name").textContent =
+          data.customerName || "-";
+        document.getElementById("tech-product").textContent =
+          data.product || "-";
+
+        // عرض التعليمات
+        if (data.instructions) {
+          const { before, during, after } = data.instructions;
+
+          document.getElementById("before-list").innerHTML = before
+            ? before
+                .split("\n")
+                .map((item) => `<li>${item}</li>`)
+                .join("")
+            : "<li>-</li>";
+          document.getElementById("during-list").innerHTML = during
+            ? during
+                .split("\n")
+                .map((item) => `<li>${item}</li>`)
+                .join("")
+            : "<li>-</li>";
+          document.getElementById("after-list").innerHTML = after
+            ? after
+                .split("\n")
+                .map((item) => `<li>${item}</li>`)
+                .join("")
+            : "<li>-</li>";
+        }
+      };
+      function finishMaintenance() {
+        // إزالة البيانات من localStorage
+        localStorage.removeItem("technicianData");
+
+        // يمكنك إما توجيه المستخدم لصفحة أخرى، أو عرض رسالة
+        // مثلاً نوجهه لصفحة الورشة الرئيسية
+        window.location.href = "/pages/WorkShop/Workshop.html";
+      }
+    </script>
+  </body>
+</html>

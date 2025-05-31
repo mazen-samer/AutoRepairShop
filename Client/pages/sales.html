@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Invoice</title>
+    <link rel="stylesheet" href="/css/sales.css" />
+  </head>
+  <body>
+    <div class="header">
+      <h1>New Invoice</h1>
+      <button
+        class="home-btn"
+        onclick="window.location.href='/pages/home.html'"
+      >
+        Home Page
+      </button>
+    </div>
+
+    <section>
+      <h2>1️⃣ Invoice Details</h2>
+      <div class="Invoice Details">
+        <label>Invoice Date: <input type="date" /></label>
+        <label>Due Date: <input type="date" /></label>
+        <label>Order Reference: <input type="text" /></label>
+        <label
+          >Status:
+          <select>
+            <option>Draft</option>
+            <option>Unpaid</option>
+            <option>Partially Paid</option>
+            <option>Paid</option>
+            <option>Cancelled</option>
+          </select>
+        </label>
+        <label>Internal Reference: <input type="text" /></label>
+        <label
+          >Notes: <textarea placeholder="Additional invoice notes"></textarea>
+        </label>
+      </div>
+    </section>
+
+    <section>
+      <h2>2️⃣ Customer Information</h2>
+      <div class="customer-info">
+        <label
+          >Customer:
+          <input type="text" id="customer-name" placeholder="customer name"
+        /></label>
+        <label for="car-plate" style="font-weight: bold; color: red"
+          >Car Plate:</label
+        >
+        <input
+          type="text"
+          id="car-plate"
+          name="car_plate"
+          placeholder="car plate (ABC1234)"
+          oninput="this.value = this.value.toUpperCase()"
+          required
+          style="text-transform: uppercase"
+        />
+        <label>Phone Number: <input type="tel" /></label>
+        <label>Email: <input type="email" /></label>
+        <label>Billing Address: <input type="text" /></label>
+        <label>Shipping Address: <input type="text" /></label>
+        <label
+          >Tax Identification Number:
+          <input type="text" placeholder="If applicable"
+        /></label>
+        <label
+          >Customer Status:
+          <select>
+            <option>New</option>
+            <option>Returning</option>
+            <option>VIP</option>
+            <option>Has Outstanding Balance</option>
+          </select>
+        </label>
+        <label
+          >Additional Notes:
+          <textarea
+            placeholder="Special requests or additional details"
+          ></textarea>
+        </label>
+      </div>
+    </section>
+
+    <section>
+      <h2>3️⃣ Products / Services</h2>
+      <div class="products-services">
+        <table border="1" id="product-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Product / Service</th>
+              <th>Description</th>
+              <th>Quantity</th>
+              <th>Unit Price</th>
+              <th>Tax (%)</th>
+              <th>Discount</th>
+              <th>Total</th>
+              <th>Select</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>
+                <select onchange="updateRow(this)">
+                  <option value="" disabled selected>Select item</option>
+                  <option
+                    data-description="High-quality item"
+                    data-price="100"
+                    data-tax="14"
+                    data-discount="10"
+                  >
+                    Product A
+                  </option>
+                  <option
+                    data-description="Service package"
+                    data-price="150"
+                    data-tax="14"
+                    data-discount="0"
+                  >
+                    Product B
+                  </option>
+                  <option
+                    data-description="Full vehicle inspection"
+                    data-price="300"
+                    data-tax="14"
+                    data-discount="20"
+                  >
+                    Inspection
+                  </option>
+                </select>
+              </td>
+              <td class="description">-</td>
+              <td>
+                <input
+                  type="number"
+                  value="1"
+                  onchange="recalculateTotal(this)"
+                />
+              </td>
+              <td class="unit-price">-</td>
+              <td class="tax">-</td>
+              <td class="discount">-</td>
+              <td class="total">-</td>
+              <td><input type="checkbox" class="row-select" /></td>
+            </tr>
+          </tbody>
+        </table>
+        <button onclick="addProductRow()">Add Product / Service</button>
+        <button onclick="removeSelectedRows()">Remove Selected</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>4️⃣ Payment Methods</h2>
+      <div class="payment-methods">
+        <label
+          >Payment Method:
+          <select>
+            <option>Cash</option>
+            <option>Bank Transfer</option>
+            <option>Credit / Debit Card</option>
+            <option>Online Payment (PayPal, Vodafone Cash, Fawry, etc.)</option>
+          </select>
+        </label>
+        <label>Amount Paid: <input type="text" /></label>
+        <button onclick="printInvoice()">Print Payment Receipt</button>
+      </div>
+    </section>
+
+    <div class="invoice-actions">
+      <button onclick="saveInvoice()">Save Invoice</button>
+      <button>Send Invoice via Email</button>
+    </div>
+
+    <script>
+      window.onload = function () {
+        const carPlate = localStorage.getItem("selectedCarPlate");
+        const customerName = localStorage.getItem("selectedCustomerName");
+
+        if (carPlate) {
+          document.getElementById("car-plate").value = carPlate.toUpperCase();
+        }
+        if (customerName) {
+          document.getElementById("customer-name").value = customerName;
+        }
+      };
+
+      function printInvoice() {
+        window.print();
+      }
+
+      function updateRow(selectEl) {
+        const row = selectEl.closest("tr");
+        const selected = selectEl.options[selectEl.selectedIndex];
+        const description = selected.dataset.description;
+        const price = parseFloat(selected.dataset.price);
+        const tax = parseFloat(selected.dataset.tax);
+        const discount = parseFloat(selected.dataset.discount);
+        const quantity = row.querySelector('input[type="number"]').value;
+
+        row.querySelector(".description").textContent = description;
+        row.querySelector(".unit-price").textContent = `${price} EGP`;
+        row.querySelector(".tax").textContent = `${tax}%`;
+        row.querySelector(".discount").textContent = `${discount} EGP`;
+
+        const total = price * quantity * (1 + tax / 100) - discount;
+        row.querySelector(".total").textContent = `${total.toFixed(2)} EGP`;
+      }
+
+      function recalculateTotal(inputEl) {
+        const row = inputEl.closest("tr");
+        const select = row.querySelector("select");
+        if (select.selectedIndex > 0) {
+          updateRow(select);
+        }
+      }
+
+      function addProductRow() {
+        const table = document.querySelector("#product-table tbody");
+        const rowCount = table.rows.length + 1;
+        const newRow = document.createElement("tr");
+        newRow.innerHTML = `
+        <td>${rowCount}</td>
+        <td>
+          <select onchange="updateRow(this)">
+            <option value="" disabled selected>Select item</option>
+            <option data-description="High-quality item" data-price="100" data-tax="14" data-discount="10">Product A</option>
+            <option data-description="Service package" data-price="150" data-tax="14" data-discount="0">Product B</option>
+            <option data-description="Full vehicle inspection" data-price="300" data-tax="14" data-discount="20">Inspection</option>
+          </select>
+        </td>
+        <td class="description">-</td>
+        <td><input type="number" value="1" onchange="recalculateTotal(this)"></td>
+        <td class="unit-price">-</td>
+        <td class="tax">-</td>
+        <td class="discount">-</td>
+        <td class="total">-</td>
+        <td><input type="checkbox" class="row-select"></td>
+      `;
+        table.appendChild(newRow);
+      }
+
+      function removeSelectedRows() {
+        const rows = document.querySelectorAll("#product-table tbody tr");
+        rows.forEach((row) => {
+          if (row.querySelector(".row-select").checked) {
+            row.remove();
+          }
+        });
+      }
+
+      function saveInvoice() {
+        const carPlate = document.getElementById("car-plate").value;
+        const customerName = document.getElementById("customer-name").value;
+
+        // نحصل على أول منتج مختار فقط (أنت تقدر تعدل ده لو عندك أكتر من منتج)
+        const productSelect = document.querySelector("#product-table select");
+        const product =
+          productSelect && productSelect.selectedIndex > 0
+            ? productSelect.options[productSelect.selectedIndex].text
+            : "";
+
+        const technicianData = {
+          carPlate,
+          customerName,
+          product,
+        };
+
+        localStorage.setItem("technicianData", JSON.stringify(technicianData));
+        window.location.href =
+          "/pages/WorkShop/Add Information For The Technician.html";
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,109 @@
+/* Global Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to right, #295F98, #E1D7C6);
+    padding: 40px;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Container */
+.container {
+    text-align: center;
+    background: white;
+    padding: 50px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    max-width: 1100px;
+    width: 90%;
+}
+
+/* Title */
+h1 {
+    color: #2C3E50;
+    margin-bottom: 20px;
+    font-size: 28px;
+}
+
+/* Filters Section */
+.filters {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    padding: 20px;
+    background: #ecf0f1;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.filters label {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.filters input, .filters select {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+/* Buttons */
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+button {
+    background: #2980B9;
+    color: white;
+    padding: 14px 24px;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 18px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    margin: 10px;
+}
+
+button:hover {
+    background-color: #CDC2A5;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    transform: scale(1.05);
+}
+
+/* Appointments Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+    font-size: 16px;
+}
+
+th {
+    background: #2980B9;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background: #f2f2f2;
+}
+
+.btn:hover {
+    background-color: #CDC2A5;
+    transform: scale(1.05);
+}

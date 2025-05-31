@@ -1,0 +1,172 @@
+/* Reset some default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #EAE4DD; /* Light background */
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #295F98; /* Deep Blue */
+    color: white;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.home-btn {
+    background-color: #CDC2A5; /* Light Beige */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.home-btn:hover {
+    background-color: #B4A68D; /* Slightly darker beige */
+}
+
+section {
+    background-color: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+section h2 {
+    font-size: 20px;
+    color: #295F98; /* Deep Blue */
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #555;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="tel"],
+input[type="email"],
+textarea,
+select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: #E1D7C6; /* Beige background for inputs */
+}
+
+textarea {
+    resize: vertical;
+    height: 100px;
+}
+
+input[type="number"] {
+    width: 80px;
+}
+
+button {
+    background-color: #295F98; /* Deep Blue */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #1E4F79; /* Darker blue on hover */
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+table th,
+table td {
+    padding: 12px 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+table th {
+    background-color: #CDC2A5; /* Light Beige */
+    font-weight: bold;
+}
+
+table td input[type="number"] {
+    width: 70px;
+}
+
+/* Section Styling */
+.invoice-details, .customer-info, .products-services, .calculations-taxes, .payment-methods {
+    margin-bottom: 15px;
+}
+
+/* Action buttons at the bottom */
+.invoice-actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.invoice-actions button {
+    width: 48%;
+}
+
+.invoice-actions button:first-child {
+    background-color: #28a745;
+}
+
+.invoice-actions button:first-child:hover {
+    background-color: #218838;
+}
+
+/* Styling for required fields */
+input[required] {
+    border-color: red;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="date"]:focus,
+select:focus {
+    border-color: #295F98; /* Deep Blue */
+    outline: none;
+    background-color: #E1D7C6; /* Beige background on focus */
+}

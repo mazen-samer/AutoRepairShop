@@ -1,0 +1,124 @@
+
+
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+/* Header with Buttons */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    color: #295F98;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Buttons (Back & Home) */
+.back-btn, .home-btn {
+    background: #295F98;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.back-btn:hover, .home-btn:hover {
+    background: #1E4A75;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    transform: scale(1.05);
+}
+
+
+fieldset {
+    border: 2px solid #295F98;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    background: #E1D7C6;
+}
+
+legend {
+    font-weight: bold;
+    color: #295F98;
+    padding: 5px 10px;
+}
+
+label {
+    font-weight: bold;
+    color: #295F98;
+    display: block;
+    margin-top: 10px;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #295F98;
+    border-radius: 5px;
+    background: #EAE4DD;
+    color: #295F98;
+    font-size: 16px;
+}
+
+input[type="radio"] {
+    margin-right: 5px;
+}
+
+button {
+    padding: 12px 25px;
+    background: #295F98;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+button:hover {
+    background: #233d66;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.hidden {
+    display: none;
+}
+
+#result {
+    margin-top: 20px;
+    padding: 15px;
+    background: #CDC2A5;
+    color: #295F98;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+}

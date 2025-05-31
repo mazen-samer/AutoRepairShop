@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Previous Servicing Information</title>
+    <link rel="stylesheet" href="/css/WorhShop/Previous Servicing Information.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- <script src="/js/Previous Servicing Information.js" defer></script> -->
+
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <!-- Page Header -->
+        <div class="header">
+            <button class="back-btn" onclick="window.location.href='/pages/WorkShop/Workshop.html'">Back</button>
+            Previous Servicing Information
+            <!-- <button class="home-btn">Home</button> -->
+            <button class="home-btn" onclick="window.location.href='/pages/home.html'">Home Page</button>
+        </div>   
+     <!-- </div> -->
+
+    <!-- Search Bar & Filters -->
+    <div class="filter-container">
+        <input type="text" placeholder="🔍 Search by Plate Number / VIN" class="filter-input">
+        <select class="filter-dropdown">
+            <option>🔧 All Services</option>
+            <option>🛢️ Oil Change</option>
+            <option>⚙️ Brake Repair</option>
+        </select>
+        <select class="filter-dropdown">
+            <option>👨‍🔧 All Mechanics</option>
+            <option>Ahmed Ali</option>
+            <option>Omar Tarek</option>
+        </select>
+        <button class="filter-button">
+            🔄 Refresh Data
+        </button>
+    </div>
+
+    <!-- Service History Table -->
+    <div class="table-container">
+        <table class="service-table">
+            <thead>
+                <tr>
+                    <th>📅 Date</th>
+                    <th>🔧 Service Type</th>
+                    <th>🚗 Mileage</th>
+                    <th>💰 Cost</th>
+                    <th>👨‍🔧 Mechanic</th>
+                    <th>📜 Status</th>
+                    <th>🔍 Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>12/02/2024</td>
+                    <td>🛢️ Oil Change</td>
+                    <td>45,000 km</td>
+                    <td>$50</td>
+                    <td>Ahmed Ali</td>
+                    <td class="status-completed">✔ Completed</td>
+                    <td class="view-details" onclick="openModal()">View</td>
+                </tr>
+                <tr>
+                    <td>05/01/2024</td>
+                    <td>⚙️ Brake Repair</td>
+                    <td>43,000 km</td>
+                    <td>$150</td>
+                    <td>Omar Tarek</td>
+                    <td class="status-pending">⏳ In Progress</td>
+                    <td class="view-details" onclick="openModal()">View</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal for Service Details -->
+    <div id="detailsModal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Service Details</h2>
+            <p><strong>📅 Date:</strong> 12/02/2024</p>
+            <p><strong>🔧 Service Type:</strong> Oil Change</p>
+            <p><strong>🚗 Mileage:</strong> 45,000 km</p>
+            <p><strong>👨‍🔧 Mechanic:</strong> Ahmed Ali</p>
+            <p><strong>💰 Cost:</strong> $50</p>
+            <p><strong>🛠️ Warranty:</strong> 3 months</p>
+            <p><strong>📜 Notes:</strong> Used original oil replacement.</p>
+            <button class="close-modal" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById("detailsModal").classList.remove("hidden");
+        }
+        function closeModal() {
+            document.getElementById("detailsModal").classList.add("hidden");
+        }
+    </script>
+
+</body>
+</html>

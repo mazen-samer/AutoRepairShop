@@ -1,0 +1,194 @@
+body {
+            font-family: 'Arial', sans-serif;
+            background-color: #EAE4DD;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background-color: #FFFFFF;
+            border-radius: 15px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: #295F98;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .back-btn, .home-btn {
+            background: #295F98;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .back-btn:hover, .home-btn:hover {
+            background: #1E4A75;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            transform: scale(1.05);
+        }
+
+        .info {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-card {
+            background-color: #E1D7C6;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 30%;
+            transition: all 0.3s ease;
+        }
+
+        .info-card i {
+            font-size: 40px;
+            color: #295F98;
+            margin-bottom: 10px;
+        }
+
+        .info-card h3 {
+            color: #295F98;
+            margin-bottom: 10px;
+        }
+
+        .info-card p {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            padding: 25px;
+            border-radius: 10px;
+            background-color: #CDC2A5;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .input-group:hover {
+            background-color: #E1D7C6;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .input-group label {
+            font-size: 20px;
+            font-weight: bold;
+            color: #295F98;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .input-group textarea {
+            width: 100%;
+            height: 130px;
+            padding: 15px;
+            font-size: 18px;
+            border-radius: 8px;
+            border: 1px solid #E1D7C6;
+            background-color: #F9F9F9;
+            resize: none;
+            color: #333;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        .input-group textarea:focus {
+            border-color: #295F98;
+            outline: none;
+            background-color: #FFFFFF;
+        }
+
+        .save-all-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            font-size: 20px;
+            background-color: #295F98;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            margin-top: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .save-all-btn:hover {
+            background-color: #243D70;
+            transform: scale(1.05);
+        }
+
+        .instructions-list {
+            margin-top: 40px;
+        }
+
+        .instructions-list div {
+            background-color: #E1D7C6;
+            margin-bottom: 25px;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .instructions-list h3 {
+            margin-top: 0;
+            color: #295F98;
+            font-size: 24px;
+        }
+
+        .instructions-list p {
+            font-size: 18px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header {
+                font-size: 28px;
+            }
+
+            .input-group label {
+                font-size: 18px;
+            }
+
+            .input-group textarea {
+                font-size: 16px;
+            }
+
+            .save-all-btn {
+                font-size: 18px;
+            }
+
+            .info {
+                flex-direction: column;
+            }
+
+            .info-card {
+                width: 100%;
+            }
+        }

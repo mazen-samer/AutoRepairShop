@@ -1,0 +1,92 @@
+/* ضبط الصفحة لتكون في منتصف الشاشة */
+body {
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    background: linear-gradient(135deg, #295F98, #E1D7C6);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* يجعل الصفحة تأخذ كل ارتفاع الشاشة */
+}
+
+/* تصميم صندوق تسجيل الدخول */
+.login-container {
+    width: 350px;
+    min-width: 320px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.9); /* خلفية شفافة قليلاً */
+    border-radius: 15px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2); /* ظل ناعم */
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* تأثير عند تمرير الماوس على الصندوق */
+.login-container:hover {
+    transform: scale(1.02);
+}
+
+/* تحسين عنوان الصفحة */
+.login-container h2 {
+    color: #295F98;
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+/* تحسين الحقول *//* تحسين شكل الحقول وجعلها متناسقة */
+input {
+    width: 100%;
+    max-width: 100%; /* تجنب تمدد الحقول خارج الحاوية */
+    padding: 14px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 8px;
+    background: #EAE4DD;
+    font-size: 18px;
+    text-align: left; /* التأكد من أن النصوص تبدأ من اليسار */
+    display: block; /* جعلها عناصر بلوك لضمان المحاذاة */
+    box-sizing: border-box; /* التأكد من أن `padding` لا يؤثر على الحجم */
+}
+
+/* تحسين تأثير الإدخال عند التفاعل */
+input:focus {
+    background: white;
+    outline: none;
+    box-shadow: 0px 0px 8px rgba(41, 95, 152, 0.5);
+}
+
+/* تحسين الحاوية لتكون أكثر تناسقًا */
+.login-container {
+    width: 400px;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* تحسين زر تسجيل الدخول */
+button {
+    width: 100%;
+    padding: 14px;
+    background: #295F98;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.2s ease-in-out;
+    font-weight: bold;
+}
+
+/* تحسين التأثير عند التفاعل مع الزر */
+button:hover {
+    background-color: #1f4b7a;
+    transform: scale(1.05);
+}
+

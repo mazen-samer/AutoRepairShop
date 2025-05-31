@@ -1,0 +1,660 @@
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Regular vehicle inspection</title>
+      <link rel="stylesheet" href="/pages/evaluation of the vehicle Ai/evaluation of the vehicle.css">
+      <script src="evaluation of the vehicle.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+      </head>
+      
+
+      <body>
+      <div class="container">
+      <!-- Header with Buttons -->
+      <div class="header">
+      Regular vehicle inspection
+      <button class="home-btn" onclick="window.location.href='/pages/home.html'">Home Page</button>
+      </div>
+
+      <form onsubmit="calculateCertainty(); return false;">
+
+        
+      <form id="carEvaluationForm">
+      <label><strong>Base Market Price (EGP):</strong><br>
+      <input type="number" id="basePrice" required>
+      </label>
+
+      <label><strong>Manufacture Year:</strong><br>
+      <select id="manufactureYear" required>
+      <option value="">Select Year</option>
+      <option value="2025">2025</option>
+      <option value="2024">2024</option>
+      <option value="2023">2023</option>
+      <option value="2022">2022</option>
+      <option value="2021">2021</option>
+      </select>
+      </label>
+
+      <label><strong>Mileage (km):</strong><br>
+      <input type="number" id="mileage" required>
+      </label>
+
+      <label><strong>Transmission Type:</strong><br>
+      <select id="transmission">
+      <option value="automatic">Automatic</option>
+      <option value="manual">Manual</option>
+      </select>
+      </label>
+
+      <label><strong>Drive Type:</strong><br>
+      <select id="driveType">
+      <option value="4wd">4WD</option>
+      <option value="rwd">Rear-Wheel Drive</option>
+      <option value="fwd">Front-Wheel Drive</option>
+      </select>
+      </label>
+
+    <label><strong>License Validity (years):</strong><br>
+    <select id="licenseYears" required>
+    <option value="">Select License Validity</option>
+    <option value="5">5 years</option>
+    <option value="4">4 years</option>
+    <option value="3">3 years</option>
+    <option value="2">2 years</option>
+    <option value="1">1 year</option>
+    </select></label>
+
+      <label><strong>Maintenance History:</strong><br>
+      <select id="maintenance">
+      <option value="regular">Regular</option>
+      <option value="irregular">Irregular</option>
+      </select>
+      </label>
+
+      <label><strong>Extras (check all that apply):</strong></label><br>
+      <input type="checkbox" class="extra" value="roof"> Sunroof<br>
+      <input type="checkbox" class="extra" value="sensors"> Parking Sensors<br>
+      <input type="checkbox" class="extra" value="keyless"> Keyless Entry<br>
+      <input type="checkbox" class="extra" value="tint"> Tinted Glass<br>
+      <input type="checkbox" class="extra" value="leather"> Leather Seats
+
+      <label><strong>Fuel Type:</strong><br>
+      <select id="fuelType">
+      <option value="hybrid">Hybrid</option>
+      <option value="electric">Electric</option>
+      <option value="gasoline">Gasoline</option>
+      </select>
+      </label>
+
+      <!-- <label><strong>Vehicle Condition CF Score (0 to 1):</strong><br>
+      <input type="number" id="cfScore" min="0" max="1" step="0.01" required>
+      </label> -->
+
+      <!-- <button type="button" onclick="calculateFinalPrice()">🔍 Calculate Vehicle Price</button> -->
+      </form>
+
+      <div id="priceResult" style="margin-top: 20px; font-weight: bold;"></div>
+
+      <!-- Section 2: Engine and Powertrain -->
+      <fieldset id="engineSection">
+      <legend><strong>2. Engine and Powertrain:</strong></legend> 
+
+      <input type="radio" name="enginePerformance" value="1.0"> Excellent 
+      <input type="radio" name="enginePerformance" value="0.8"> Very Good
+      <input type="radio" name="enginePerformance" value="0.6"> Good
+      <input type="radio" name="enginePerformance" value="0.4"> Fair
+      <input type="radio" name="enginePerformance" value="0"> Unknown / Can't Tell
+      <input type="radio" name="enginePerformance" value="-0.4"> Slightly Worn
+      <input type="radio" name="enginePerformance" value="-0.6"> Worn
+      <input type="radio" name="enginePerformance" value="-0.8"> Heavily Worn
+      <input type="radio" name="enginePerformance" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label for="fuelEfficiency">Fuel consumption efficiency:</label><br>
+      <input type="radio" name="fuelEfficiency" value="1.0"> Excellent
+      <input type="radio" name="fuelEfficiency" value="0.8"> Very Good
+      <input type="radio" name="fuelEfficiency" value="0.6"> Good
+      <input type="radio" name="fuelEfficiency" value="0.4"> Fair
+      <input type="radio" name="fuelEfficiency" value="0"> Unknown / Can't Tell
+      <input type="radio" name="fuelEfficiency" value="-0.4"> Slightly Worn
+      <input type="radio" name="fuelEfficiency" value="-0.6"> Worn
+      <input type="radio" name="fuelEfficiency" value="-0.8"> Heavily Worn
+      <input type="radio" name="fuelEfficiency" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label for="accelerationNoise">Smooth acceleration and engine noise:</label><br>
+      <input type="radio" name="accelerationNoise" value="1"> Excellent
+      <input type="radio" name="accelerationNoise" value="0.8"> Very Good
+      <input type="radio" name="accelerationNoise" value="0.6"> Good
+      <input type="radio" name="accelerationNoise" value="0.4"> Fair
+      <input type="radio" name="accelerationNoise" value="0"> Unknown / Can't Tell
+      <input type="radio" name="accelerationNoise" value="-0.4"> Slightly Worn
+      <input type="radio" name="accelerationNoise" value="-0.6"> Worn
+      <input type="radio" name="accelerationNoise" value="-0.8"> Heavily Worn
+      <input type="radio" name="accelerationNoise" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label for="fluidLeaks">No oil or fluid leaks:</label><br>
+      <input type="radio" name="fluidLeaks" value="1.0"> Excellent
+      <input type="radio" name="fluidLeaks" value="0.8"> Very Good
+      <input type="radio" name="fluidLeaks" value="0.6"> Good
+      <input type="radio" name="fluidLeaks" value="0.4"> Fair
+      <input type="radio" name="fluidLeaks" value="0"> Unknown / Can't Tell
+      <input type="radio" name="fluidLeaks" value="-0.4"> Slightly Worn
+      <input type="radio" name="fluidLeaks" value="-0.6"> Worn
+      <input type="radio" name="fluidLeaks" value="-0.8"> Heavily Worn
+      <input type="radio" name="fluidLeaks" value="-1.0"> Needs Immediate Repair
+      <br><br>
+      </fieldset>
+      <!-- ======================================== -->
+
+      <!-- Section 2: Chassis and Body -->
+      <fieldset id="chassisSection">
+      <legend><strong>3. Chassis :</strong></legend>
+
+      <label>Condition of the chassis and whether there are any welds or major repairs:</label><br>
+      <input type="radio" name="chassisCondition" value="1.0"> Excellent
+      <input type="radio" name="chassisCondition" value="0.8"> Very Good
+      <input type="radio" name="chassisCondition" value="0.6"> Good
+      <input type="radio" name="chassisCondition" value="0.4"> Fair
+      <input type="radio" name="chassisCondition" value="0"> Unknown / Can't Tell
+      <input type="radio" name="chassisCondition" value="-0.4"> Slightly Worn
+      <input type="radio" name="chassisCondition" value="-0.6"> Worn
+      <input type="radio" name="chassisCondition" value="-0.8"> Heavily Worn
+      <input type="radio" name="chassisCondition" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label>Any signs of accidents or rust on the body:</label><br>
+      <input type="radio" name="bodyRustDamage" value="1.0"> Excellent
+      <input type="radio" name="bodyRustDamage" value="0.8"> Very Good
+      <input type="radio" name="bodyRustDamage" value="0.6"> Good
+      <input type="radio" name="bodyRustDamage" value="0.4"> Fair
+      <input type="radio" name="bodyRustDamage" value="0"> Unknown / Can't Tell
+      <input type="radio" name="bodyRustDamage" value="-0.4"> Slightly Worn
+      <input type="radio" name="bodyRustDamage" value="-0.6"> Worn
+      <input type="radio" name="bodyRustDamage" value="-0.8"> Heavily Worn
+      <input type="radio" name="bodyRustDamage" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label>Durability of doors, windows, and absence of major scratches:</label><br>
+      <input type="radio" name="doorWindowDurability" value="1.0"> Excellent
+      <input type="radio" name="doorWindowDurability" value="0.8"> Very Good
+      <input type="radio" name="doorWindowDurability" value="0.6"> Good
+      <input type="radio" name="doorWindowDurability" value="0.4"> Fair
+      <input type="radio" name="doorWindowDurability" value="0"> Unknown / Can't Tell
+      <input type="radio" name="doorWindowDurability" value="-0.4"> Slightly Worn
+      <input type="radio" name="doorWindowDurability" value="-0.6"> Worn
+      <input type="radio" name="doorWindowDurability" value="-0.8"> Heavily Worn
+      <input type="radio" name="doorWindowDurability" value="-1.0"> Needs Immediate Repair
+      <br><br>
+      </fieldset>
+
+      <fieldset id="bodySection">
+      <legend><strong>4. Body:</strong></legend>
+
+      <label>Ride comfort and shock absorption:</label><br>
+      <input type="radio" name="rideComfort" value="1.0"> Excellent
+      <input type="radio" name="rideComfort" value="0.8"> Very Good
+      <input type="radio" name="rideComfort" value="0.6"> Good
+      <input type="radio" name="rideComfort" value="0.4"> Fair
+      <input type="radio" name="rideComfort" value="0"> Unknown / Can't Tell
+      <input type="radio" name="rideComfort" value="-0.4"> Slightly Worn
+      <input type="radio" name="rideComfort" value="-0.6"> Worn
+      <input type="radio" name="rideComfort" value="-0.8"> Heavily Worn
+      <input type="radio" name="rideComfort" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label>Stability at high speeds and during turns:</label><br>
+      <input type="radio" name="highSpeedStability" value="1.0"> Excellent
+      <input type="radio" name="highSpeedStability" value="0.8"> Very Good
+      <input type="radio" name="highSpeedStability" value="0.6"> Good
+      <input type="radio" name="highSpeedStability" value="0.4"> Fair
+      <input type="radio" name="highSpeedStability" value="0"> Unknown / Can't Tell
+      <input type="radio" name="highSpeedStability" value="-0.4"> Slightly Worn
+      <input type="radio" name="highSpeedStability" value="-0.6"> Worn
+      <input type="radio" name="highSpeedStability" value="-0.8"> Heavily Worn
+      <input type="radio" name="highSpeedStability" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label>Quality of shock absorbers and joints, and absence of unusual noises:</label><br>
+      <input type="radio" name="shockAbsorberQuality" value="1.0"> Excellent
+      <input type="radio" name="shockAbsorberQuality" value="0.8"> Very Good
+      <input type="radio" name="shockAbsorberQuality" value="0.6"> Good
+      <input type="radio" name="shockAbsorberQuality" value="0.4"> Fair
+      <input type="radio" name="shockAbsorberQuality" value="0"> Unknown / Can't Tell
+      <input type="radio" name="shockAbsorberQuality" value="-0.4"> Slightly Worn
+      <input type="radio" name="shockAbsorberQuality" value="-0.6"> Worn
+      <input type="radio" name="shockAbsorberQuality" value="-0.8"> Heavily Worn
+      <input type="radio" name="shockAbsorberQuality" value="-1.0"> Needs Immediate Repair
+      <br><br>
+      </fieldset>
+
+
+      <fieldset id="brakingSection">
+      <legend><strong>5. Braking System:</strong></legend>
+
+      <label>Brake response and stopping power:</label><br>
+      <input type="radio" name="brakeResponse" value="1.0"> Excellent
+      <input type="radio" name="brakeResponse" value="0.8"> Very Good
+      <input type="radio" name="brakeResponse" value="0.6"> Good
+      <input type="radio" name="brakeResponse" value="0.4"> Fair
+      <input type="radio" name="brakeResponse" value="0"> Unknown / Can't Tell
+      <input type="radio" name="brakeResponse" value="-0.4"> Slightly Worn
+      <input type="radio" name="brakeResponse" value="-0.6"> Worn
+      <input type="radio" name="brakeResponse" value="-0.8"> Heavily Worn
+      <input type="radio" name="brakeResponse" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label>Functionality of ABS and EBD systems:</label><br>
+      <input type="radio" name="absEbdFunctionality" value="1.0"> Excellent
+      <input type="radio" name="absEbdFunctionality" value="0.8"> Very Good
+      <input type="radio" name="absEbdFunctionality" value="0.6"> Good
+      <input type="radio" name="absEbdFunctionality" value="0.4"> Fair
+      <input type="radio" name="absEbdFunctionality" value="0"> Unknown / Can't Tell
+      <input type="radio" name="absEbdFunctionality" value="-0.4"> Slightly Worn
+      <input type="radio" name="absEbdFunctionality" value="-0.6"> Worn
+      <input type="radio" name="absEbdFunctionality" value="-0.8"> Heavily Worn
+      <input type="radio" name="absEbdFunctionality" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label>No vibrations or noises when braking:</label><br>
+      <input type="radio" name="brakeNoise" value="1.0"> Excellent
+      <input type="radio" name="brakeNoise" value="0.8"> Very Good
+      <input type="radio" name="brakeNoise" value="0.6"> Good
+      <input type="radio" name="brakeNoise" value="0.4"> Fair
+      <input type="radio" name="brakeNoise" value="0"> Unknown / Can't Tell
+      <input type="radio" name="brakeNoise" value="-0.4"> Slightly Worn
+      <input type="radio" name="brakeNoise" value="-0.6"> Worn
+      <input type="radio" name="brakeNoise" value="-0.8"> Heavily Worn
+      <input type="radio" name="brakeNoise" value="-1.0"> Needs Immediate Repair
+      <br><br>
+      </fieldset>
+              
+
+      <fieldset id="tiresSection">
+      <legend><strong>6. Tires and Rims:</strong></legend>
+
+      <label>Tire condition in terms of tread depth and wear:</label><br>
+      <input type="radio" name="tireCondition" value="1.0"> Excellent
+      <input type="radio" name="tireCondition" value="0.8"> Very Good
+      <input type="radio" name="tireCondition" value="0.6"> Good
+      <input type="radio" name="tireCondition" value="0.4"> Fair
+      <input type="radio" name="tireCondition" value="0"> Unknown / Can't Tell
+      <input type="radio" name="tireCondition" value="-0.4"> Slightly Worn
+      <input type="radio" name="tireCondition" value="-0.6"> Worn
+      <input type="radio" name="tireCondition" value="-0.8"> Heavily Worn
+      <input type="radio" name="tireCondition" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label>Rim quality and absence of bends or scratches:</label><br>
+      <input type="radio" name="rimQuality" value="1.0"> Excellent
+      <input type="radio" name="rimQuality" value="0.8"> Very Good
+      <input type="radio" name="rimQuality" value="0.6"> Good
+      <input type="radio" name="rimQuality" value="0.4"> Fair
+      <input type="radio" name="rimQuality" value="0"> Unknown / Can't Tell
+      <input type="radio" name="rimQuality" value="-0.4"> Slightly Worn
+      <input type="radio" name="rimQuality" value="-0.6"> Worn
+      <input type="radio" name="rimQuality" value="-0.8"> Heavily Worn
+      <input type="radio" name="rimQuality" value="-1.0"> Needs Immediate Repair
+      <br><br>
+      </fieldset>
+      <fieldset id="electricalSection">
+      <legend><strong>7. Electrical and Electronics System:</strong></legend>
+
+      <label>Battery condition and remaining lifespan:</label><br>
+      <input type="radio" name="batteryCondition" value="1.0"> Excellent
+      <input type="radio" name="batteryCondition" value="0.8"> Very Good
+      <input type="radio" name="batteryCondition" value="0.6"> Good
+      <input type="radio" name="batteryCondition" value="0.4"> Fair
+      <input type="radio" name="batteryCondition" value="0"> Unknown / Can't Tell
+      <input type="radio" name="batteryCondition" value="-0.4"> Slightly Worn
+      <input type="radio" name="batteryCondition" value="-0.6"> Worn
+      <input type="radio" name="batteryCondition" value="-0.8"> Heavily Worn
+      <input type="radio" name="batteryCondition" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label>Functionality of front and rear lights and indicators:</label><br>
+      <input type="radio" name="lightFunctionality" value="1.0"> Excellent
+      <input type="radio" name="lightFunctionality" value="0.8"> Very Good
+      <input type="radio" name="lightFunctionality" value="0.6"> Good
+      <input type="radio" name="lightFunctionality" value="0.4"> Fair
+      <input type="radio" name="lightFunctionality" value="0"> Unknown / Can't Tell
+      <input type="radio" name="lightFunctionality" value="-0.4"> Slightly Worn
+      <input type="radio" name="lightFunctionality" value="-0.6"> Worn
+      <input type="radio" name="lightFunctionality" value="-0.8"> Heavily Worn
+      <input type="radio" name="lightFunctionality" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label>Screen, dashboard, and infotainment system performance:</label><br>
+      <input type="radio" name="infotainmentSystem" value="1.0"> Excellent
+      <input type="radio" name="infotainmentSystem" value="0.8"> Very Good
+      <input type="radio" name="infotainmentSystem" value="0.6"> Good
+      <input type="radio" name="infotainmentSystem" value="0.4"> Fair
+      <input type="radio" name="infotainmentSystem" value="0"> Unknown / Can't Tell
+      <input type="radio" name="infotainmentSystem" value="-0.4"> Slightly Worn
+      <input type="radio" name="infotainmentSystem" value="-0.6"> Worn
+      <input type="radio" name="infotainmentSystem" value="-0.8"> Heavily Worn
+      <input type="radio" name="infotainmentSystem" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label>Working power windows and central locking system:</label><br>
+      <input type="radio" name="windowsLocks" value="1.0"> Excellent
+      <input type="radio" name="windowsLocks" value="0.8"> Very Good
+      <input type="radio" name="windowsLocks" value="0.6"> Good
+      <input type="radio" name="windowsLocks" value="0.4"> Fair
+      <input type="radio" name="windowsLocks" value="0"> Unknown / Can't Tell
+      <input type="radio" name="windowsLocks" value="-0.4"> Slightly Worn
+      <input type="radio" name="windowsLocks" value="-0.6"> Worn
+      <input type="radio" name="windowsLocks" value="-0.8"> Heavily Worn
+      <input type="radio" name="windowsLocks" value="-1.0"> Needs Immediate Repair
+      <br><br>
+      </fieldset>
+
+
+
+      <fieldset id="interiorSection">
+      <legend><strong>8. Interior Condition:</strong></legend>
+
+      <label>Seats and upholstery condition (leather/fabric) and cleanliness:</label><br>
+      <input type="radio" name="seatUpholstery" value="1.0"> Excellent
+      <input type="radio" name="seatUpholstery" value="0.8"> Very Good
+      <input type="radio" name="seatUpholstery" value="0.6"> Good
+      <input type="radio" name="seatUpholstery" value="0.4"> Fair
+      <input type="radio" name="seatUpholstery" value="0"> Unknown / Can't Tell
+      <input type="radio" name="seatUpholstery" value="-0.4"> Slightly Worn
+      <input type="radio" name="seatUpholstery" value="-0.6"> Worn
+      <input type="radio" name="seatUpholstery" value="-0.8"> Heavily Worn
+      <input type="radio" name="seatUpholstery" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label>Air conditioning and heating efficiency:</label><br>
+      <input type="radio" name="acHeating" value="1.0"> Excellent
+      <input type="radio" name="acHeating" value="0.8"> Very Good
+      <input type="radio" name="acHeating" value="0.6"> Good
+      <input type="radio" name="acHeating" value="0.4"> Fair
+      <input type="radio" name="acHeating" value="0"> Unknown / Can't Tell
+      <input type="radio" name="acHeating" value="-0.4"> Slightly Worn
+      <input type="radio" name="acHeating" value="-0.6"> Worn
+      <input type="radio" name="acHeating" value="-0.8"> Heavily Worn
+      <input type="radio" name="acHeating" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label>No unpleasant odors or internal electrical issues:</label><br>
+      <input type="radio" name="interiorOdorElectrical" value="1.0"> Excellent
+      <input type="radio" name="interiorOdorElectrical" value="0.8"> Very Good
+      <input type="radio" name="interiorOdorElectrical" value="0.6"> Good
+      <input type="radio" name="interiorOdorElectrical" value="0.4"> Fair
+      <input type="radio" name="interiorOdorElectrical" value="0"> Unknown / Can't Tell
+      <input type="radio" name="interiorOdorElectrical" value="-0.4"> Slightly Worn
+      <input type="radio" name="interiorOdorElectrical" value="-0.6"> Worn
+      <input type="radio" name="interiorOdorElectrical" value="-0.8"> Heavily Worn
+      <input type="radio" name="interiorOdorElectrical" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label>Airbag safety and functionality:</label><br>
+      <input type="radio" name="airbagFunctionality" value="1.0"> Excellent
+      <input type="radio" name="airbagFunctionality" value="0.8"> Very Good
+      <input type="radio" name="airbagFunctionality" value="0.6"> Good
+      <input type="radio" name="airbagFunctionality" value="0.4"> Fair
+      <input type="radio" name="airbagFunctionality" value="0"> Unknown / Can't Tell
+      <input type="radio" name="airbagFunctionality" value="-0.4"> Slightly Worn
+      <input type="radio" name="airbagFunctionality" value="-0.6"> Worn
+      <input type="radio" name="airbagFunctionality" value="-0.8"> Heavily Worn
+      <input type="radio" name="airbagFunctionality" value="-1.0"> Needs Immediate Repair
+      <br><br>
+      </fieldset>
+      <fieldset id="maintenanceSection">
+      <legend><strong>9. Maintenance and Accident History:</strong></legend>
+
+      <label>Mileage and whether it matches the car’s condition:</label><br>
+      <input type="radio" name="mileageCondition" value="1.0"> Excellent
+      <input type="radio" name="mileageCondition" value="0.8"> Very Good
+      <input type="radio" name="mileageCondition" value="0.6"> Good
+      <input type="radio" name="mileageCondition" value="0.4"> Fair
+      <input type="radio" name="mileageCondition" value="0"> Unknown / Can't Tell
+      <input type="radio" name="mileageCondition" value="-0.4"> Slightly Worn
+      <input type="radio" name="mileageCondition" value="-0.6"> Worn
+      <input type="radio" name="mileageCondition" value="-0.8"> Heavily Worn
+      <input type="radio" name="mileageCondition" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label>Periodic inspections and previous maintenance records:</label><br>
+      <input type="radio" name="maintenanceRecords" value="1.0"> Excellent
+      <input type="radio" name="maintenanceRecords" value="0.8"> Very Good
+      <input type="radio" name="maintenanceRecords" value="0.6"> Good
+      <input type="radio" name="maintenanceRecords" value="0.4"> Fair
+      <input type="radio" name="maintenanceRecords" value="0"> Unknown / Can't Tell
+      <input type="radio" name="maintenanceRecords" value="-0.4"> Slightly Worn
+      <input type="radio" name="maintenanceRecords" value="-0.6"> Worn
+      <input type="radio" name="maintenanceRecords" value="-0.8"> Heavily Worn
+      <input type="radio" name="maintenanceRecords" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label>Whether the car has been in major accidents and repaired:</label><br>
+      <input type="radio" name="accidentHistory" value="1.0"> Excellent
+      <input type="radio" name="accidentHistory" value="0.8"> Very Good
+      <input type="radio" name="accidentHistory" value="0.6"> Good
+      <input type="radio" name="accidentHistory" value="0.4"> Fair
+      <input type="radio" name="accidentHistory" value="0"> Unknown / Can't Tell
+      <input type="radio" name="accidentHistory" value="-0.4"> Slightly Worn
+      <input type="radio" name="accidentHistory" value="-0.6"> Worn
+      <input type="radio" name="accidentHistory" value="-0.8"> Heavily Worn
+      <input type="radio" name="accidentHistory" value="-1.0"> Needs Immediate Repair
+      <br><br>
+      </fieldset>
+
+
+
+      <fieldset id="drivingPerformanceSection">
+      <legend><strong>10. Driving Performance (Test Drive):</strong></legend>
+
+      <label>Steering smoothness and ease of handling:</label><br>
+      <input type="radio" name="steeringHandling" value="1.0"> Excellent
+      <input type="radio" name="steeringHandling" value="0.8"> Very Good
+      <input type="radio" name="steeringHandling" value="0.6"> Good
+      <input type="radio" name="steeringHandling" value="0.4"> Fair
+      <input type="radio" name="steeringHandling" value="0"> Unknown / Can't Tell
+      <input type="radio" name="steeringHandling" value="-0.4"> Slightly Worn
+      <input type="radio" name="steeringHandling" value="-0.6"> Worn
+      <input type="radio" name="steeringHandling" value="-0.8"> Heavily Worn
+      <input type="radio" name="steeringHandling" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label>Transmission smoothness and gear shifting:</label><br>
+      <input type="radio" name="transmissionSmoothness" value="1.0"> Excellent
+      <input type="radio" name="transmissionSmoothness" value="0.8"> Very Good
+      <input type="radio" name="transmissionSmoothness" value="0.6"> Good
+      <input type="radio" name="transmissionSmoothness" value="0.4"> Fair
+      <input type="radio" name="transmissionSmoothness" value="0"> Unknown / Can't Tell
+      <input type="radio" name="transmissionSmoothness" value="-0.4"> Slightly Worn
+      <input type="radio" name="transmissionSmoothness" value="-0.6"> Worn
+      <input type="radio" name="transmissionSmoothness" value="-0.8"> Heavily Worn
+      <input type="radio" name="transmissionSmoothness" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label>Feeling of safety and stability while driving:</label><br>
+      <input type="radio" name="drivingSafety" value="1.0"> Excellent
+      <input type="radio" name="drivingSafety" value="0.8"> Very Good
+      <input type="radio" name="drivingSafety" value="0.6"> Good
+      <input type="radio" name="drivingSafety" value="0.4"> Fair
+      <input type="radio" name="drivingSafety" value="0"> Unknown / Can't Tell
+      <input type="radio" name="drivingSafety" value="-0.4"> Slightly Worn
+      <input type="radio" name="drivingSafety" value="-0.6"> Worn
+      <input type="radio" name="drivingSafety" value="-0.8"> Heavily Worn
+      <input type="radio" name="drivingSafety" value="-1.0"> Needs Immediate Repair
+      <br><br>
+      </fieldset>
+
+      <fieldset id="safetySection">
+      <legend><strong>11. Safety Features:</strong></legend>
+
+      <label>Number of airbags and their condition:</label><br>
+      <input type="radio" name="airbagsCondition" value="1.0"> Excellent
+      <input type="radio" name="airbagsCondition" value="0.8"> Very Good
+      <input type="radio" name="airbagsCondition" value="0.6"> Good
+      <input type="radio" name="airbagsCondition" value="0.4"> Fair
+      <input type="radio" name="airbagsCondition" value="0"> Unknown / Can't Tell
+      <input type="radio" name="airbagsCondition" value="-0.4"> Slightly Worn
+      <input type="radio" name="airbagsCondition" value="-0.6"> Worn
+      <input type="radio" name="airbagsCondition" value="-0.8"> Heavily Worn
+      <input type="radio" name="airbagsCondition" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label>Presence of assistance systems like ABS, ESP, and EBD:</label><br>
+      <input type="radio" name="assistanceSystems" value="1.0"> Excellent
+      <input type="radio" name="assistanceSystems" value="0.8"> Very Good
+      <input type="radio" name="assistanceSystems" value="0.6"> Good
+      <input type="radio" name="assistanceSystems" value="0.4"> Fair
+      <input type="radio" name="assistanceSystems" value="0"> Unknown / Can't Tell
+      <input type="radio" name="assistanceSystems" value="-0.4"> Slightly Worn
+      <input type="radio" name="assistanceSystems" value="-0.6"> Worn
+      <input type="radio" name="assistanceSystems" value="-0.8"> Heavily Worn
+      <input type="radio" name="assistanceSystems" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label>Seatbelt condition and efficiency:</label><br>
+      <input type="radio" name="seatbeltCondition" value="1.0"> Excellent
+      <input type="radio" name="seatbeltCondition" value="0.8"> Very Good
+      <input type="radio" name="seatbeltCondition" value="0.6"> Good
+      <input type="radio" name="seatbeltCondition" value="0.4"> Fair
+      <input type="radio" name="seatbeltCondition" value="0"> Unknown / Can't Tell
+      <input type="radio" name="seatbeltCondition" value="-0.4"> Slightly Worn
+      <input type="radio" name="seatbeltCondition" value="-0.6"> Worn
+      <input type="radio" name="seatbeltCondition" value="-0.8"> Heavily Worn
+      <input type="radio" name="seatbeltCondition" value="-1.0"> Needs Immediate Repair
+      <br><br>
+      </fieldset>
+
+
+      <fieldset id="exhaustSection">
+      <legend><strong>12. Exhaust System:</strong></legend>
+
+      <label>No excessive smoke or unusual exhaust colors:</label><br>
+      <input type="radio" name="exhaustSmokeColor" value="1.0"> Excellent
+      <input type="radio" name="exhaustSmokeColor" value="0.8"> Very Good
+      <input type="radio" name="exhaustSmokeColor" value="0.6"> Good
+      <input type="radio" name="exhaustSmokeColor" value="0.4"> Fair
+      <input type="radio" name="exhaustSmokeColor" value="0"> Unknown / Can't Tell
+      <input type="radio" name="exhaustSmokeColor" value="-0.4"> Slightly Worn
+      <input type="radio" name="exhaustSmokeColor" value="-0.6"> Worn
+      <input type="radio" name="exhaustSmokeColor" value="-0.8"> Heavily Worn
+      <input type="radio" name="exhaustSmokeColor" value="-1.0"> Needs Immediate Repair
+      <br><br>
+
+      <label>No strange noises coming from the exhaust system:</label><br>
+      <input type="radio" name="exhaustNoise" value="1.0"> Excellent
+      <input type="radio" name="exhaustNoise" value="0.8"> Very Good
+      <input type="radio" name="exhaustNoise" value="0.6"> Good
+      <input type="radio" name="exhaustNoise" value="0.4"> Fair
+      <input type="radio" name="exhaustNoise" value="0"> Unknown / Can't Tell
+      <input type="radio" name="exhaustNoise" value="-0.4"> Slightly Worn
+      <input type="radio" name="exhaustNoise" value="-0.6"> Worn
+      <input type="radio" name="exhaustNoise" value="-0.8"> Heavily Worn
+      <input type="radio" name="exhaustNoise" value="-1.0"> Needs Immediate Repair
+      <br><br>
+      </fieldset>
+
+
+    
+      <div class="container">
+    <div style="margin-top: 20px; text-align:center">
+      <button type="button" onclick="calculateAllCFandPrice()" style="padding: 12px 24px; background-color: #2196F3; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px;">
+        🔎 Calculate CF & Final Price
+      </button>
+    </div>
+    <br><br>
+
+    <div id="fullResult"></div>
+    <div id="priceResult"></div>
+
+    <!-- Chart Container -->
+    <div id="chartContainer" style="margin-top: 30px; text-align: center;">
+  <canvas id="cfPieChart" width="400" height="400"></canvas>
+</div>
+
+
+    <!-- Print Button -->
+    <div style="margin-top: 30px; text-align:center">
+      <button onclick="window.print()" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
+        🖨️ Print Report (PDF)
+      </button>
+    </div>
+  </div>
+<!-- ============================================================================================= -->
+<!-- Market Comparison Section (Initially Hidden) -->
+<div id="marketCompareSection" style="display: none; margin-top: 30px;">
+  <h3>📊 Market Price Comparison</h3>
+  <p>Enter known market prices for similar vehicles:</p>
+  <input type="number" class="marketPrice" placeholder="Market Price 1"><br><br>
+  <input type="number" class="marketPrice" placeholder="Market Price 2"><br><br>
+  <input type="number" class="marketPrice" placeholder="Market Price 3"><br><br>
+  <input type="number" class="marketPrice" placeholder="Market Price 4"><br><br>
+  <input type="number" class="marketPrice" placeholder="Market Price 5"><br><br>
+
+  <button onclick="compareWithMarket()">Compare Now</button>
+
+  <div id="marketComparisonResult" style="margin-top: 20px; font-size: 16px;"></div>
+</div>
+
+<script>
+function compareWithMarket() {
+  const inputs = document.querySelectorAll(".marketPrice");
+  const prices = Array.from(inputs)
+    .map(i => parseFloat(i.value))
+    .filter(p => !isNaN(p) && p > 0);
+
+  if (prices.length === 0) {
+    document.getElementById("marketComparisonResult").innerHTML = "<span style='color: red;'>Please enter at least one valid market price.</span>";
+    return;
+  }
+
+  const avg = prices.reduce((a, b) => a + b, 0) / prices.length;
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
+
+  if (typeof window.lastFinalPrice !== "number" || isNaN(window.lastFinalPrice) || window.lastFinalPrice <= 0) {
+    document.getElementById("marketComparisonResult").innerHTML = "<span style='color: red;'>❗ Estimated price not available. Please calculate it first.</span>";
+    return;
+  }
+
+  const finalPrice = window.lastFinalPrice;
+  const diff = finalPrice - avg;
+  const percentRaw = (diff / avg) * 100;
+  const percent = percentRaw.toFixed(1);
+  const direction = percentRaw > 0 ? 'Higher than market average' : (percentRaw < 0 ? 'Lower than market average' : 'Same as market average');
+  const color = percentRaw > 0 ? 'green' : (percentRaw < 0 ? 'red' : 'gray');
+  let status = "";
+
+  if (finalPrice < min) status = "Below market range ❗";
+  else if (finalPrice > max) status = "Above market range ⚠️";
+  else status = "Within market range ✅";
+
+  const range = max - min;
+  const barPercentage = range === 0 ? 100 : Math.min(Math.max((finalPrice - min) / range, 0), 1) * 100;
+
+  document.getElementById("marketComparisonResult").innerHTML = `
+    <div style="padding: 20px; border-radius: 10px; background: #f8f8f8; box-shadow: 0 0 10px rgba(0,0,0,0.1); font-family: sans-serif;">
+      <strong>Market Avg:</strong> EGP ${avg.toFixed(0)}<br>
+      <strong>Your Estimate:</strong> EGP ${finalPrice.toFixed(0)}<br>
+      <strong>Difference:</strong> <span style="color: ${color};">${percent > 0 ? "+" : ""}${percent}% (${direction})</span><br>
+      <strong>Status:</strong> ${status}
+
+      <div style="position: relative; height: 20px; background: #ddd; border-radius: 10px; overflow: hidden; margin-top: 20px;">
+        <div style="width: ${barPercentage}%; background: linear-gradient(to right, #4CAF50, #2196F3); height: 100%;"></div>
+        <div style="position: absolute; top: -22px; left: 0; font-size: 12px;">Min: ${min.toLocaleString()}</div>
+        <div style="position: absolute; top: -22px; right: 0; font-size: 12px;">Max: ${max.toLocaleString()}</div>
+        <div style="position: absolute; top: 22px; left: ${barPercentage}%; transform: translateX(-50%); font-size: 12px; font-weight: bold;">You</div>
+      </div>
+    </div>
+  `;
+}
+</script>
+
+      </form>
+      </div>
+      </body>
+      </html>

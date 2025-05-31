@@ -1,0 +1,111 @@
+body {
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    background: linear-gradient(135deg, #295F98, #E1D7C6);
+    margin: 5%;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 70%; 
+}
+
+.chat-container {
+    width: 400px;
+    margin: 50px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    color: #295F98;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Buttons (Back & Home) */
+.back-btn, .home-btn {
+    background: #295F98;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.back-btn:hover, .home-btn:hover {
+    background: #1E4A75;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    transform: scale(1.05);
+}
+
+h2 {
+    color: #333;
+}
+
+.chat-box {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 5px;
+}
+
+.bot-message, .user-message {
+    padding: 8px 12px;
+    margin: 5px;
+    border-radius: 5px;
+    max-width: 80%;
+}
+
+.bot-message {
+    background: #007bff;
+    color: white;
+    text-align: left;
+}
+
+.user-message {
+    background: #28a745;
+    color: white;
+    text-align: right;
+    margin-left: auto;
+}
+
+.input-container {
+    margin-top: 10px;
+    display: flex;
+    gap: 5px;
+}
+
+input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+button {
+    padding: 10px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}

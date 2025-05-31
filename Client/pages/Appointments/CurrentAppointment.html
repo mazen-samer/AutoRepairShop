@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Booking</title>
+    <link rel="stylesheet" href="/css/WorhShop/Daily Booking.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header with Buttons -->
+        <div class="header">
+            <button class="back-btn" onclick="window.location.href='/pages/WorkShop/Workshop.html'">Back</button>
+            Daily Booking
+            <button class="home-btn" onclick="window.location.href='/pages/home.html'">Home Page</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Customer Name</th>
+                    <th style="font-weight: bold; color: red;">Car Plate</th>
+                    <th>Service</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Staff</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="bookingTableBody">
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <span>Number Of Cars Reserved Today:</span>
+            <input type="text" id="carCount" readonly value="0">
+        </div>
+    </div>
+
+    <script>
+        window.onload = function () {
+            let carCount = 0;
+            const tableBody = document.getElementById('bookingTableBody');
+            const bookings = JSON.parse(localStorage.getItem("appointments")) || [];
+
+            bookings.forEach((data, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${data.customerName}</td>
+                    <td style="font-weight: bold; color: red; text-transform: uppercase;">${data.carPlate.toUpperCase()}</td>
+                    <td>${data.service}</td>
+                    <td>${data.date}</td>
+                    <td>${data.time}</td>
+                    <td>${data.staff}</td>
+                    <td><button onclick="openInvoice(${index})">Open</button></td>
+                `;
+                tableBody.appendChild(row);
+                carCount++;
+            });
+
+            document.getElementById('carCount').value = carCount;
+        };
+
+        function openInvoice(index) {
+    const bookings = JSON.parse(localStorage.getItem("appointments")) || [];
+    const selected = bookings[index];
+
+    localStorage.setItem("selectedAppointment", index);
+    localStorage.setItem("selectedCarPlate", selected.carPlate);
+    localStorage.setItem("selectedCustomerName", selected.customerName); // ✅ أضفنا الاسم هنا
+
+    window.location.href = "/pages/sales.html";
+}
+
+    </script>
+</body>
+</html>
