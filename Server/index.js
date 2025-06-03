@@ -1,27 +1,28 @@
 const express = require("express");
-const { sequelize, Customer } = require("./src/models"); // Import DB connection and models
-
+const { sequelize } = require("./src/models"); // Import DB connection and models
 const app = express();
 const port = 3000;
+const cors = require("cors");
 
+const appointmentsRouter = require("./routes/appointments");
+const customersRouter = require("./routes/customers");
+const servicesRouter = require("./routes/services");
+const invoicesRouter = require("./routes/invoices");
+const feedbackRouter = require("./routes/feedback");
+const invoiceServicesRouter = require("./routes/invoiceServices");
+const instructionsRouter = require("./routes/instructions");
+
+app.use(cors());
 app.use(express.json());
+app.use("/api/appointments", appointmentsRouter);
+app.use("/api/customers", customersRouter);
+app.use("/api/services", servicesRouter);
+app.use("/api/invoices", invoicesRouter);
+app.use("/api/feedback", feedbackRouter);
+app.use("/api/invoiceServices", invoiceServicesRouter);
+app.use("/api/instructions", instructionsRouter);
 
-app.get("/", (req, res) => {
-  res.status(200).send("Hello World! Welcome to the Auto Repair Shop API! 🚗");
-});
 
-// A new test route to verify the database connection and model usage
-app.get("/customers", async (req, res) => {
-  try {
-    const customers = await Customer.findAll();
-    res.status(200).json(customers);
-  } catch (error) {
-    console.error("Error fetching customers:", error);
-    res.status(500).json({ message: "Error fetching customers" });
-  }
-});
-
-// The main logic to start the server
 const start = async () => {
   try {
     // Test the database connection
