@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Appointments Dashboard</title>
-    <link rel="stylesheet" href="/css/Appointments Dashboard.css" />
+    <link rel="stylesheet" href="../../css/Appointments Dashboard.css" />
   </head>
   <body>
     <div class="container">
@@ -20,17 +20,17 @@
 
         <label for="status">Status:</label>
         <select id="status">
-          <option value="all">All</option>
-          <option value="confirmed">Confirmed</option>
-          <option value="pending">Pending</option>
-          <option value="cancelled">Cancelled</option>
+          <option value="All">All</option>
+          <option value="Pending">Pending</option>
+          <option value="Completed">Completed</option>
+          <option value="Denied">Denied</option>
         </select>
 
         <label for="customer-search">Search Customer:</label>
         <input
           type="text"
           id="customer-search"
-          placeholder="Enter customer name or phone"
+          placeholder="Enter Customer's Car Plate"
         />
 
         <button onclick="filterAppointments()">Apply Filters</button>
@@ -68,5 +68,81 @@
         </button>
       </div>
     </div>
+
+    <script>
+      let allAppointments = []; // Store all appointments globally
+
+      // Fetch and render appointments
+      function fetchAppointments() {
+        fetch('http://localhost:3000/api/appointments')
+          .then(response => response.json())
+          .then(appointments => {
+            allAppointments = appointments; // Store fetched appointments
+            renderAppointments(allAppointments); // Render all appointments initially
+          })
+          .catch(error => {
+            alert('Error loading appointments: ' + error.message);
+          });
+      }
+
+      // Refresh button handler
+      function refreshAppointments() {
+        fetchAppointments();
+      }
+
+      // New Appointment button handler
+      function addAppointment() {
+        window.location.href = '/pages/Appointments/NewAppointment.html';
+      }
+
+      // Print button handler
+      function printAppointments() {
+        window.print();
+      }
+
+      // Initial load
+      window.addEventListener('DOMContentLoaded', fetchAppointments);
+
+      function renderAppointments(appointments) {
+        const tbody = document.getElementById('appointments-list');
+        tbody.innerHTML = ''; // Clear existing rows
+        appointments.forEach((appt, idx) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${idx + 1}</td>
+            <td>${appt.CarPlate || ''}</td>
+            <td>${appt.ServiceId || ''}</td>
+            <td>${appt.AppointmentDate || ''}</td>
+            <td>${appt.AppointmentTime || ''}</td>
+            <td>${appt.Status || ''}</td>
+            <td>${appt.Staff || ''}</td>
+            <td>
+              <!-- You can add edit/delete buttons here -->
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      function filterAppointments() {
+        const startDate = document.getElementById('start-date').value;
+        const endDate = document.getElementById('end-date').value;
+        const status = document.getElementById('status').value;
+        const customerSearch = document.getElementById('customer-search').value.toLowerCase();
+
+        const filteredAppointments = allAppointments.filter(appt => {
+          const appointmentDate = new Date(appt.AppointmentDate);
+          const isWithinDateRange = startDate == "" || endDate == "" ? true : (!startDate || appointmentDate >= new Date(startDate)) &&
+                                    (!endDate || appointmentDate <= new Date(endDate));
+          const isStatusMatch = (status === 'All' || appt.Status === status);
+          const isCustomerMatch = (appt.CarPlate.toLowerCase().includes(customerSearch) || 
+                                   appt.Staff.toLowerCase().includes(customerSearch));
+
+          return isWithinDateRange && isStatusMatch && isCustomerMatch;
+        });
+
+        renderAppointments(filteredAppointments); // Render filtered appointments
+      }
+    </script>
   </body>
 </html>
