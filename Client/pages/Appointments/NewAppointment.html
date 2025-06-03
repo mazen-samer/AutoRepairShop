@@ -6,7 +6,7 @@
     <title>New Appointment</title>
     <link
       rel="stylesheet"
-      href="/css/Apointments and Reservations/New Appointment.css"
+      href="../../css/Apointments and Reservations/New Appointment.css"
     />
   </head>
   <body>
@@ -35,27 +35,16 @@
             <label for="car-plate" style="font-weight: bold; color: red"
               >Car Plate:</label
             >
-            <input
-              type="text"
-              id="car-plate"
-              name="car_plate"
-              placeholder="car plate (ABC1234)"
-              oninput="this.value = this.value.toUpperCase()"
-              required
-              style="text-transform: uppercase"
-            />
+            <select id="car-plate" name="car_plate" required>
+              <option disabled selected>Loading...</option>
+            </select>
             <small style="color: gray"></small>
           </div>
 
           <div class="form-group">
             <label for="service">Service:</label>
             <select id="service" name="service" required>
-              <option disabled selected>Select Service</option>
-              <option>Oil Change</option>
-              <option>Brake Inspection</option>
-              <option>Engine Tune-Up</option>
-              <option>Battery Replacement</option>
-              <option>Wheel Alignment</option>
+              <option disabled selected>Loading...</option>
             </select>
           </div>
 
@@ -88,37 +77,80 @@
     </div>
 
     <script>
+      // Fetch car plates and populate the dropdown
+      window.addEventListener('DOMContentLoaded', function() {
+        fetch('http://localhost:3000/api/customers')
+          .then(response => response.json())
+          .then(customers => {
+            const carPlateSelect = document.getElementById('car-plate');
+            carPlateSelect.innerHTML = '<option disabled selected>Select Car Plate</option>';
+            customers.forEach(customer => {
+              const option = document.createElement('option');
+              option.value = customer.CarPlate;
+              option.textContent = customer.CarPlate;
+              carPlateSelect.appendChild(option);
+            });
+          })
+          .catch(error => {
+            const carPlateSelect = document.getElementById('car-plate');
+            carPlateSelect.innerHTML = '<option disabled selected>Error loading car plates</option>';
+          });
+
+        // Services fetch
+        fetch('http://localhost:3000/api/services')
+          .then(response => response.json())
+          .then(services => {
+            const serviceSelect = document.getElementById('service');
+            serviceSelect.innerHTML = '<option disabled selected>Select Service</option>';
+            services.forEach(service => {
+              const option = document.createElement('option');
+              option.value = service.ServiceId; // Use the ID for backend consistency
+              option.textContent = service.Name;
+              serviceSelect.appendChild(option);
+            });
+          })
+          .catch(error => {
+            const serviceSelect = document.getElementById('service');
+            serviceSelect.innerHTML = '<option disabled selected>Error loading services</option>';
+          });
+      });
+
       function saveAppointment(event) {
         event.preventDefault();
 
-        const customerName = document
-          .getElementById("customer-name")
-          .value.trim();
-        const carPlate = document
-          .getElementById("car-plate")
-          .value.trim()
-          .toUpperCase();
+        // Collect form data
+        const carPlate = document.getElementById("car-plate").value.trim().toUpperCase();
         const service = document.getElementById("service").value;
         const date = document.getElementById("date").value;
         const time = document.getElementById("time").value;
         const staff = document.getElementById("staff").value.trim();
 
         const newAppointment = {
-          customerName,
-          carPlate,
-          service,
-          date,
-          time,
-          staff,
+          CarPlate: carPlate,
+          ServiceId: service,
+          AppointmentDate: date,
+          AppointmentTime: time,
+          Staff: staff,
+          Status: "Pending"
         };
 
-        // حفظ البيانات في localStorage
-        let appointments =
-          JSON.parse(localStorage.getItem("appointments")) || [];
-        appointments.push(newAppointment);
-        localStorage.setItem("appointments", JSON.stringify(appointments));
-
-        window.location.href = "/pages/WorkShop/Daily Booking.html";
+        // Send to backend
+        fetch('http://localhost:3000/api/appointments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newAppointment)
+        })
+        .then(response => {
+          if (!response.ok) throw new Error('Failed to create appointment');
+          return response.json();
+        })
+        .then(data => {
+          // Success: redirect or show a message
+          window.location.href = "/pages/WorkShop/Daily Booking.html";
+        })
+        .catch(error => {
+          alert('Error: ' + error.message);
+        });
       }
     </script>
   </body>
