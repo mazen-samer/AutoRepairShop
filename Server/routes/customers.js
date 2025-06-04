@@ -1,5 +1,5 @@
 const express = require("express");
-const { Customer } = require("../src/models");
+const { Customer, Invoice, Service, InvoiceService } = require("../src/models");
 const router = express.Router();
 
 // GET /api/customers - List all customers
@@ -71,4 +71,71 @@ router.delete("/:carPlate", async (req, res) => {
   }
 });
 
-module.exports = router; 
+router.get("/:carPlate/servicing-history", async (req, res) => {
+  try {
+    const carPlateParam = req.params.carPlate;
+
+    const customer = await Customer.findByPk(carPlateParam);
+    if (!customer) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+
+    // Fetch invoices for the customer and include the associated services
+    // Sequelize knows to go through InvoiceService because of the belongsToMany definition
+    const invoices = await Invoice.findAll({
+      where: { CarPlate: carPlateParam },
+      include: [
+        {
+          model: Service, // Directly include the Service model
+          attributes: ["ServiceId", "Name", "Price", "Description"], // Specify attributes of Service you want
+          // By default, Sequelize will use the plural model name for the alias, so 'Services'
+          // If you defined an 'as' alias in Invoice.belongsToMany(Service, { as: 'MyAlias', ...}), use that here.
+          through: {
+            attributes: [], // This ensures we don't get attributes from the InvoiceService junction table itself
+          },
+        },
+      ],
+      // We don't strictly need invoice attributes if we only care about the services,
+      // but keeping InvoiceId might be useful for debugging or future expansion.
+      attributes: ["InvoiceId", "CarPlate"],
+    });
+
+    if (!invoices || invoices.length === 0) {
+      return res.status(200).json([]); // No invoices for this customer, so no service history
+    }
+
+    // Process the results to get a unique list of services
+    const servicesRendered = new Map();
+
+    invoices.forEach((invoice) => {
+      // When using belongsToMany, the associated models are usually available
+      // as a pluralized property (e.g., invoice.Services)
+      // Please verify the exact property name by logging an 'invoice' object if it doesn't work.
+      const associatedServices = invoice.Services; // Default alias is often plural: "Services"
+
+      if (associatedServices && associatedServices.length > 0) {
+        associatedServices.forEach((service) => {
+          if (service && !servicesRendered.has(service.ServiceId)) {
+            servicesRendered.set(service.ServiceId, {
+              ServiceId: service.ServiceId,
+              Name: service.Name,
+              Price: service.Price,
+              Description: service.Description,
+            });
+          }
+        });
+      }
+    });
+
+    res.status(200).json(Array.from(servicesRendered.values()));
+  } catch (error) {
+    console.error("Error fetching customer servicing history:", error);
+    // Send back the actual error for more detailed client-side debugging if needed
+    res.status(500).json({
+      message: "Error fetching customer servicing history",
+      error: error.message,
+    });
+  }
+});
+
+module.exports = router;

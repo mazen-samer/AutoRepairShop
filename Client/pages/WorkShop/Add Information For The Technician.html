@@ -8,10 +8,27 @@
       rel="stylesheet"
       href="../../css/WorhShop/Add Information For The Technician.css"
     />
+    <style>
+      /* Basic styling for select dropdowns if not in your CSS */
+      .info-card select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      .info-card p {
+        /* Ensure p tags also have some consistent styling if needed */
+        padding: 8px;
+        margin-top: 5px;
+        min-height: 36px; /* Roughly same height as a select */
+        box-sizing: border-box;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
-      <!-- Header with Buttons -->
       <div class="header">
         <button class="back-btn" onclick="window.location.href='Workshop.html'">
           Back
@@ -22,12 +39,13 @@
         </button>
       </div>
 
-      <!-- Info Cards -->
       <div class="info">
         <div class="info-card">
           <i class="fas fa-car"></i>
           <h3>Car Plate</h3>
-          <p id="car-plate-display">-</p>
+          <select id="car-plate-select">
+            <option value="">-- Select Car Plate --</option>
+          </select>
         </div>
         <div class="info-card">
           <i class="fas fa-cogs"></i>
@@ -36,12 +54,13 @@
         </div>
         <div class="info-card">
           <i class="fas fa-clock"></i>
-          <h3>Product / Service</h3>
-          <p id="product-display">-</p>
+          <h3>Product / Service (from History)</h3>
+          <select id="service-select" disabled>
+            <option value="">-- Select Car Plate First --</option>
+          </select>
         </div>
       </div>
 
-      <!-- Add Instructions Before Maintenance -->
       <div class="input-group">
         <label for="before-maintenance"
           >Add Instructions Before Maintenance</label
@@ -51,8 +70,6 @@
           placeholder="Enter instructions here..."
         ></textarea>
       </div>
-
-      <!-- Add Instructions During Maintenance -->
       <div class="input-group">
         <label for="during-maintenance"
           >Add Instructions During Maintenance</label
@@ -62,8 +79,6 @@
           placeholder="Enter instructions here..."
         ></textarea>
       </div>
-
-      <!-- Add Instructions After Maintenance -->
       <div class="input-group">
         <label for="after-maintenance"
           >Add Instructions After Maintenance</label
@@ -73,67 +88,199 @@
           placeholder="Enter instructions here..."
         ></textarea>
       </div>
-
-      <!-- Single Save Button -->
       <div>
-        <button class="save-all-btn" onclick="saveAllInstructions()">
+        <button
+          type="button"
+          class="save-all-btn"
+          onclick="saveAllInstructions()"
+        >
           Save All Instructions
         </button>
       </div>
     </div>
 
     <script>
-      window.onload = function () {
-        const data = JSON.parse(localStorage.getItem("technicianData")) || {};
-        if (data.carPlate) {
-          document.getElementById("car-plate-display").textContent =
-            data.carPlate;
+      const API_BASE_URL = "http://localhost:3000";
+      let allCustomers = []; // To store customer data for autofilling name
+
+      // --- DOM Elements ---
+      const carPlateSelect = document.getElementById("car-plate-select");
+      const customerNameDisplay = document.getElementById(
+        "customer-name-display"
+      );
+      const serviceSelect = document.getElementById("service-select");
+      const beforeMaintenanceInput =
+        document.getElementById("before-maintenance");
+      const duringMaintenanceInput =
+        document.getElementById("during-maintenance");
+      const afterMaintenanceInput =
+        document.getElementById("after-maintenance");
+
+      // --- ON PAGE LOAD ---
+      window.addEventListener("load", async () => {
+        await populateCarPlateDropdown();
+      });
+
+      /**
+       * Populates the Car Plate dropdown.
+       */
+      async function populateCarPlateDropdown() {
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/customers`);
+          if (!response.ok) throw new Error("Failed to fetch customers");
+          allCustomers = await response.json();
+
+          carPlateSelect.innerHTML =
+            '<option value="">-- Select Car Plate --</option>';
+          allCustomers.forEach((customer) => {
+            const option = document.createElement("option");
+            option.value = customer.CarPlate;
+            option.textContent = customer.CarPlate;
+            carPlateSelect.appendChild(option);
+          });
+        } catch (error) {
+          console.error("Error populating car plates:", error);
+          carPlateSelect.innerHTML =
+            '<option value="">Error loading car plates</option>';
         }
-        if (data.customerName) {
-          document.getElementById("customer-name-display").textContent =
-            data.customerName;
-        }
-        if (data.product) {
-          document.getElementById("product-display").textContent = data.product;
-        }
-      };
-
-      function saveAllInstructions() {
-        const before = document
-          .getElementById("before-maintenance")
-          .value.trim();
-        const during = document
-          .getElementById("during-maintenance")
-          .value.trim();
-        const after = document.getElementById("after-maintenance").value.trim();
-
-        const technicianData =
-          JSON.parse(localStorage.getItem("technicianData")) || {};
-
-        technicianData.instructions = {
-          before,
-          during,
-          after,
-        };
-
-        localStorage.setItem("technicianData", JSON.stringify(technicianData));
-        window.location.href = "/pages/WorkShop/Technician Screen.html";
       }
 
-      window.onload = function () {
-        const data = JSON.parse(localStorage.getItem("technicianData")) || {};
-        if (data.carPlate) {
-          document.getElementById("car-plate-display").textContent =
-            data.carPlate;
+      /**
+       * Fetches and populates the service history for the selected car plate.
+       */
+      async function fetchAndPopulateServiceHistory(selectedCarPlate) {
+        serviceSelect.innerHTML =
+          '<option value="">Loading services...</option>';
+        serviceSelect.disabled = true;
+
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/api/customers/${selectedCarPlate}/servicing-history`
+          );
+          if (!response.ok) {
+            if (response.status === 404) {
+              // Customer found, but no service history
+              serviceSelect.innerHTML =
+                '<option value="">No past services found</option>';
+              return; // Keep dropdown disabled or allow selection of "no specific service"
+            }
+            throw new Error("Failed to fetch service history");
+          }
+          const services = await response.json();
+
+          if (services.length === 0) {
+            serviceSelect.innerHTML =
+              '<option value="">No past services found</option>';
+            return;
+          }
+
+          serviceSelect.innerHTML =
+            '<option value="">-- Select Service from History --</option>';
+          services.forEach((service) => {
+            const option = document.createElement("option");
+            option.value = service.ServiceId;
+            option.textContent = `${service.Name} (ID: ${service.ServiceId})`; // Display service name
+            serviceSelect.appendChild(option);
+          });
+          serviceSelect.disabled = false;
+        } catch (error) {
+          console.error("Error populating service history:", error);
+          serviceSelect.innerHTML =
+            '<option value="">Error loading services</option>';
+          serviceSelect.disabled = true;
         }
-        if (data.customerName) {
-          document.getElementById("customer-name-display").textContent =
-            data.customerName;
+      }
+
+      /**
+       * Handles selection change on the Car Plate dropdown.
+       */
+      carPlateSelect.addEventListener("change", async (event) => {
+        const selectedCarPlate = event.target.value;
+
+        // Reset dependent fields
+        customerNameDisplay.textContent = "-";
+        serviceSelect.innerHTML =
+          '<option value="">-- Select Car Plate First --</option>';
+        serviceSelect.disabled = true;
+
+        if (selectedCarPlate) {
+          const selectedCustomer = allCustomers.find(
+            (c) => c.CarPlate === selectedCarPlate
+          );
+          if (selectedCustomer) {
+            customerNameDisplay.textContent = selectedCustomer.Name;
+          }
+          // Fetch and populate this customer's service history
+          await fetchAndPopulateServiceHistory(selectedCarPlate);
         }
-        if (data.product) {
-          document.getElementById("product-display").textContent = data.product;
+      });
+
+      /**
+       * Saves the instructions to the backend.
+       */
+      async function saveAllInstructions() {
+        const selectedCarPlate = carPlateSelect.value;
+        const selectedServiceId = serviceSelect.value;
+
+        const instructionsBefore = beforeMaintenanceInput.value.trim();
+        const instructionsDuring = duringMaintenanceInput.value.trim();
+        const instructionsAfter = afterMaintenanceInput.value.trim();
+
+        if (!selectedCarPlate) {
+          alert("Please select a Car Plate.");
+          return;
         }
-      };
+        if (!selectedServiceId) {
+          alert("Please select a Service from the history.");
+          return;
+        }
+        if (!instructionsBefore && !instructionsDuring && !instructionsAfter) {
+          alert("Please enter at least one instruction.");
+          return;
+        }
+
+        const payload = {
+          CarPlate: selectedCarPlate,
+          ServiceId: parseInt(selectedServiceId, 10),
+          InstructionsBefore: instructionsBefore,
+          InstructionsDuring: instructionsDuring,
+          InstructionsAfter: instructionsAfter,
+        };
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/instructions`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(
+              errorData.message || "Failed to save instructions."
+            );
+          }
+
+          alert("Instructions saved successfully!");
+          // Reset form elements
+          beforeMaintenanceInput.value = "";
+          duringMaintenanceInput.value = "";
+          afterMaintenanceInput.value = "";
+          carPlateSelect.value = "";
+          serviceSelect.innerHTML =
+            '<option value="">-- Select Car Plate First --</option>';
+          serviceSelect.disabled = true;
+          customerNameDisplay.textContent = "-";
+
+          // Optional: Redirect or provide further user feedback
+          // window.location.href = "/pages/WorkShop/Technician Screen.html";
+        } catch (error) {
+          console.error("Error saving instructions:", error);
+          alert(`Error: ${error.message}`);
+        }
+      }
     </script>
   </body>
 </html>

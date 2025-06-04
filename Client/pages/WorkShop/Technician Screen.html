@@ -3,12 +3,49 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Technician Screen</title>
+    <title>Technician Screen - All Instructions</title>
     <link rel="stylesheet" href="../../css/WorhShop/Technician Screen.css" />
+    <style>
+      /* Basic table styling if not in your CSS */
+      .instructions-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      .instructions-table th,
+      .instructions-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      .instructions-table th {
+        background-color: #f2f2f2;
+      }
+      .instructions-table .view-details-btn {
+        cursor: pointer;
+        color: blue;
+        text-decoration: underline;
+      }
+      .filter-bar {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .filter-bar input {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .details-view {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 2px solid #eee;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
-      <!-- Header with Buttons -->
       <div class="header">
         <button class="back-btn" onclick="window.location.href='Workshop.html'">
           Back
@@ -19,116 +56,299 @@
         </button>
       </div>
 
-      <!-- General Information -->
-      <div class="info">
-        <div class="info-card">
-          <i class="fas fa-car"></i>
-          <h3>Car Plate</h3>
-          <p id="tech-car-plate">-</p>
-        </div>
-        <div class="info-card">
-          <i class="fas fa-cogs"></i>
-          <h3>Customer Name</h3>
-          <p id="tech-customer-name">-</p>
-        </div>
-        <div class="info-card">
-          <i class="fas fa-clock"></i>
-          <h3>Product / Service</h3>
-          <p id="tech-product">-</p>
-        </div>
+      <div class="filter-bar">
+        <input
+          type="text"
+          id="carPlateFilter"
+          placeholder="Filter by Car Plate..."
+        />
+        <button id="refreshInstructionsBtn">Refresh List</button>
       </div>
 
-      <!-- Engineer's Instructions -->
-      <div class="instructions">
-        <h2>Instructions from Engineer</h2>
-        <h3>Before Maintenance</h3>
-        <ul id="before-list">
-          <li>-</li>
-        </ul>
-        <h3>During Maintenance</h3>
-        <ul id="during-list">
-          <li>-</li>
-        </ul>
-        <h3>After Maintenance</h3>
-        <ul id="after-list">
-          <li>-</li>
-        </ul>
+      <div class="table-container">
+        <h2>All Instructions</h2>
+        <table class="instructions-table">
+          <thead>
+            <tr>
+              <th>Car Plate</th>
+              <th>Service ID</th>
+              <th>Instructions Before (Preview)</th>
+              <th>Instructions During (Preview)</th>
+              <th>Instructions After (Preview)</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="instructions-table-body"></tbody>
+        </table>
       </div>
 
-      <!-- Maintenance Steps
-        <div class="steps">
-            <h2>Maintenance Steps</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Step</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Replace oil filter</td>
-                        <td>✅ Completed</td>
-                    </tr>
-                    <tr>
-                        <td>Inspect brakes</td>
-                        <td>🔄 In Progress</td>
-                    </tr>
-                    <tr>
-                        <td>Check coolant level</td>
-                        <td>⏳ Pending</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div> -->
+      <div id="instruction-details-view" class="details-view hidden">
+        <h2>Instruction Details</h2>
+        <div class="info">
+          <div class="info-card">
+            <i class="fas fa-car"></i>
+            <h3>Car Plate</h3>
+            <p id="detail-car-plate">-</p>
+          </div>
+          <div class="info-card">
+            <i class="fas fa-cogs"></i>
+            <h3>Customer Name</h3>
+            <p id="detail-customer-name">-</p>
+          </div>
+          <div class="info-card">
+            <i class="fas fa-clock"></i>
+            <h3>Product / Service</h3>
+            <p id="detail-service-name">-</p>
+          </div>
+        </div>
 
-      <!-- Current Status -->
+        <div class="instructions">
+          <h3>Before Maintenance</h3>
+          <ul id="detail-before-list">
+            <li>-</li>
+          </ul>
+          <h3>During Maintenance</h3>
+          <ul id="detail-during-list">
+            <li>-</li>
+          </ul>
+          <h3>After Maintenance</h3>
+          <ul id="detail-after-list">
+            <li>-</li>
+          </ul>
+        </div>
+      </div>
     </div>
 
     <script>
-      window.onload = function () {
-        const data = JSON.parse(localStorage.getItem("technicianData")) || {};
+      const API_BASE_URL = "http://localhost:3000";
+      let allInstructionData = []; // To store all fetched instructions
+      let currentlyDisplayedInstruction = null; // To store the instruction being viewed in detail
 
-        // عرض المعلومات العامة
-        document.getElementById("tech-car-plate").textContent =
-          data.carPlate || "-";
-        document.getElementById("tech-customer-name").textContent =
-          data.customerName || "-";
-        document.getElementById("tech-product").textContent =
-          data.product || "-";
+      // --- DOM Elements ---
+      const instructionTableBody = document.getElementById(
+        "instructions-table-body"
+      );
+      const carPlateFilterInput = document.getElementById("carPlateFilter");
+      const refreshInstructionsBtn = document.getElementById(
+        "refreshInstructionsBtn"
+      );
 
-        // عرض التعليمات
-        if (data.instructions) {
-          const { before, during, after } = data.instructions;
+      const detailCarPlateDisplay = document.getElementById("detail-car-plate");
+      const detailCustomerNameDisplay = document.getElementById(
+        "detail-customer-name"
+      );
+      const detailServiceNameDisplay = document.getElementById(
+        "detail-service-name"
+      );
+      const detailBeforeList = document.getElementById("detail-before-list");
+      const detailDuringList = document.getElementById("detail-during-list");
+      const detailAfterList = document.getElementById("detail-after-list");
+      const instructionDetailsView = document.getElementById(
+        "instruction-details-view"
+      );
 
-          document.getElementById("before-list").innerHTML = before
-            ? before
-                .split("\n")
-                .map((item) => `<li>${item}</li>`)
-                .join("")
-            : "<li>-</li>";
-          document.getElementById("during-list").innerHTML = during
-            ? during
-                .split("\n")
-                .map((item) => `<li>${item}</li>`)
-                .join("")
-            : "<li>-</li>";
-          document.getElementById("after-list").innerHTML = after
-            ? after
-                .split("\n")
-                .map((item) => `<li>${item}</li>`)
-                .join("")
-            : "<li>-</li>";
-        }
-      };
-      function finishMaintenance() {
-        // إزالة البيانات من localStorage
-        localStorage.removeItem("technicianData");
+      // --- ON PAGE LOAD ---
+      window.addEventListener("load", initializeTechnicianScreen);
 
-        // يمكنك إما توجيه المستخدم لصفحة أخرى، أو عرض رسالة
-        // مثلاً نوجهه لصفحة الورشة الرئيسية
-        window.location.href = "/pages/WorkShop/Workshop.html";
+      async function initializeTechnicianScreen() {
+        await fetchAndRenderInstructions();
+        carPlateFilterInput.addEventListener("input", applyInstructionFilters);
+        refreshInstructionsBtn.addEventListener(
+          "click",
+          fetchAndRenderInstructions
+        );
       }
+
+      /**
+       * Fetches all instructions from the API and renders them in the table.
+       */
+      async function fetchAndRenderInstructions() {
+        instructionTableBody.innerHTML = `<tr><td colspan="6">Loading instructions...</td></tr>`;
+        instructionDetailsView.classList.add("hidden"); // Hide details view on refresh
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/instructions`);
+          if (!response.ok) throw new Error("Failed to fetch instructions.");
+          allInstructionData = await response.json();
+          renderInstructionsTable(allInstructionData);
+        } catch (error) {
+          console.error("Error fetching instructions:", error);
+          instructionTableBody.innerHTML = `<tr><td colspan="6">Error loading instructions.</td></tr>`;
+        }
+      }
+
+      /**
+       * Renders an array of instruction objects into the table.
+       */
+      function renderInstructionsTable(instructionsToDisplay) {
+        instructionTableBody.innerHTML = "";
+        if (!instructionsToDisplay || instructionsToDisplay.length === 0) {
+          instructionTableBody.innerHTML = `<tr><td colspan="6">No instructions found.</td></tr>`;
+          return;
+        }
+
+        instructionsToDisplay.forEach((instruction) => {
+          const row = document.createElement("tr");
+          const previewLength = 50; // Show a short preview of instructions
+
+          row.innerHTML = `
+            <td>${instruction.CarPlate || "N/A"}</td>
+            <td>${instruction.ServiceId || "N/A"}</td>
+            <td>${(instruction.InstructionsBefore || "").substring(
+              0,
+              previewLength
+            )}${
+            instruction.InstructionsBefore &&
+            instruction.InstructionsBefore.length > previewLength
+              ? "..."
+              : ""
+          }</td>
+            <td>${(instruction.InstructionsDuring || "").substring(
+              0,
+              previewLength
+            )}${
+            instruction.InstructionsDuring &&
+            instruction.InstructionsDuring.length > previewLength
+              ? "..."
+              : ""
+          }</td>
+            <td>${(instruction.InstructionsAfter || "").substring(
+              0,
+              previewLength
+            )}${
+            instruction.InstructionsAfter &&
+            instruction.InstructionsAfter.length > previewLength
+              ? "..."
+              : ""
+          }</td>
+            <td><button class="view-details-btn" data-instruction-id="${
+              instruction.InstructionId
+            }">View Details</button></td>
+          `;
+          instructionTableBody.appendChild(row);
+        });
+
+        // Add event listeners to new "View Details" buttons
+        document.querySelectorAll(".view-details-btn").forEach((button) => {
+          button.addEventListener("click", (e) => {
+            const instructionId = e.target.getAttribute("data-instruction-id");
+            displayInstructionDetails(parseInt(instructionId, 10));
+          });
+        });
+      }
+
+      /**
+       * Applies filters based on user input.
+       */
+      function applyInstructionFilters() {
+        const carPlateQuery = carPlateFilterInput.value.toLowerCase();
+
+        const filteredData = allInstructionData.filter((instruction) => {
+          const carPlateMatch = instruction.CarPlate
+            ? instruction.CarPlate.toLowerCase().includes(carPlateQuery)
+            : true;
+          // Add more filters here if needed in the future
+          return carPlateMatch;
+        });
+        renderInstructionsTable(filteredData);
+        instructionDetailsView.classList.add("hidden"); // Hide details when filter changes
+      }
+
+      /**
+       * Populates a list (<ul>) with instruction items.
+       */
+      function populateInstructionList(listElement, instructionsText) {
+        listElement.innerHTML = ""; // Clear previous items
+        if (instructionsText && instructionsText.trim() !== "") {
+          instructionsText.split("\n").forEach((item) => {
+            const li = document.createElement("li");
+            li.textContent = item;
+            listElement.appendChild(li);
+          });
+        } else {
+          listElement.innerHTML = "<li>- No instructions -</li>";
+        }
+      }
+
+      /**
+       * Fetches and displays full details for a selected instruction.
+       */
+      async function displayInstructionDetails(instructionId) {
+        currentlyDisplayedInstruction = allInstructionData.find(
+          (inst) => inst.InstructionId === instructionId
+        );
+        if (!currentlyDisplayedInstruction) {
+          alert("Instruction details not found.");
+          return;
+        }
+
+        instructionDetailsView.classList.remove("hidden");
+
+        // Display basic info from the selected instruction
+        detailCarPlateDisplay.textContent =
+          currentlyDisplayedInstruction.CarPlate || "N/A";
+
+        // Reset dependent displays
+        detailCustomerNameDisplay.textContent = "Loading...";
+        detailServiceNameDisplay.textContent = "Loading...";
+
+        // Fetch Customer Name
+        if (currentlyDisplayedInstruction.CarPlate) {
+          try {
+            const custResponse = await fetch(
+              `${API_BASE_URL}/api/customers/${currentlyDisplayedInstruction.CarPlate}`
+            );
+            if (custResponse.ok) {
+              const customer = await custResponse.json();
+              detailCustomerNameDisplay.textContent = customer.Name || "N/A";
+            } else {
+              detailCustomerNameDisplay.textContent = "Customer N/A";
+            }
+          } catch (e) {
+            console.error("Error fetching customer for details:", e);
+            detailCustomerNameDisplay.textContent = "Error";
+          }
+        } else {
+          detailCustomerNameDisplay.textContent = "N/A";
+        }
+
+        // Fetch Service Name
+        if (currentlyDisplayedInstruction.ServiceId) {
+          try {
+            const servResponse = await fetch(
+              `${API_BASE_URL}/api/services/${currentlyDisplayedInstruction.ServiceId}`
+            );
+            if (servResponse.ok) {
+              const service = await servResponse.json();
+              detailServiceNameDisplay.textContent = service.Name || "N/A";
+            } else {
+              detailServiceNameDisplay.textContent = "Service N/A";
+            }
+          } catch (e) {
+            console.error("Error fetching service for details:", e);
+            detailServiceNameDisplay.textContent = "Error";
+          }
+        } else {
+          detailServiceNameDisplay.textContent = "N/A";
+        }
+
+        // Populate instruction lists
+        populateInstructionList(
+          detailBeforeList,
+          currentlyDisplayedInstruction.InstructionsBefore
+        );
+        populateInstructionList(
+          detailDuringList,
+          currentlyDisplayedInstruction.InstructionsDuring
+        );
+        populateInstructionList(
+          detailAfterList,
+          currentlyDisplayedInstruction.InstructionsAfter
+        );
+      }
+
+      // Note: The finishMaintenance() function has been removed as its original
+      // purpose related to localStorage is no longer relevant in this list view.
+      // If you need a way to mark instructions as "completed", that would be a new feature.
     </script>
   </body>
 </html>
