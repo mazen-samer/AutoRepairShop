@@ -1,291 +1,543 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Customer Feedback</title>
-    <link rel="stylesheet" href="/pages/Feedback AI/Customer Feedback.css">
-
-    <script>
-        function fuzzyLogicEvaluation() {
-            const technicianSkills = document.querySelector('input[name="technicianSkills"]:checked').value;
-            const diagnosisAccuracy = document.querySelector('input[name="diagnosisAccuracy"]:checked').value;
-            const modernTechUsage = document.querySelector('input[name="modernTechUsage"]:checked').value;
-
-            let technicianSkillsScore = fuzzyScore(technicianSkills);
-            let diagnosisAccuracyScore = fuzzyScore(diagnosisAccuracy);
-            let modernTechUsageScore = fuzzyScore(modernTechUsage);
-
-            let averageScore = (technicianSkillsScore + diagnosisAccuracyScore + modernTechUsageScore) / 3;
-
-            alert("Your overall fuzzy evaluation score is: " + averageScore.toFixed(2));
-        }
-
-        function fuzzyScore(answer) {
-            switch(answer) {
-                case 'Poor': return 0.1;
-                case 'Fair': return 0.4;
-                case 'Good': return 0.6;
-                case 'Very Good': return 0.8;
-                case 'Excellent': return 1.0;
-                case 'Never': return 0.1;
-                case 'Sometimes': return 0.4;
-                case 'Often': return 0.6;
-                case 'Always': return 1.0;
-                default: return 0;
-            }
-        }
-    </script>
-</head>
-<body>
+    <link rel="stylesheet" href="Customer Feedback.css" />
+  </head>
+  <body>
     <div class="container">
-    <!-- Header with Buttons -->
-    <div class="header">
-        <!-- <button class="back-btn" onclick="window.location.href='/pages/WorkShop/Workshop.html'">Back</button> -->
+      <div class="header">
         Customer Feedback
-        <button class="home-btn" onclick="window.location.href='/pages/home.html'">Home Page</button>
+        <button
+          class="home-btn"
+          onclick="window.location.href='/pages/home.html'"
+        >
+          Home Page
+        </button>
+      </div>
+
+      <form id="feedback-form">
+        <fieldset>
+          <legend><strong>Basic Information</strong></legend>
+
+          <label for="licensePlate">License Plate Number:</label>
+          <select id="licensePlate" name="licensePlate" required>
+            <option value="" disabled selected>
+              Select a car plate...
+            </option></select
+          ><br /><br />
+
+          <label for="customerName">Customer Name:</label>
+          <input
+            type="text"
+            id="customerName"
+            name="customerName"
+            readonly
+          /><br /><br />
+
+          <label for="phoneNumber">Phone Number:</label>
+          <input
+            type="text"
+            id="phoneNumber"
+            name="phoneNumber"
+            readonly
+          /><br /><br />
+
+          <label for="date">Date:</label>
+          <input type="date" id="date" name="date" required /><br /><br />
+
+          <label for="carType">Car Type:</label>
+          <input type="text" id="carType" name="carType" /><br /><br />
+
+          <label for="carModel">Car Model and Year:</label>
+          <input type="text" id="carModel" name="carModel" /><br /><br />
+
+          <label for="numPreviousVisits"
+            >Number of Previous Visits to the Center:</label
+          >
+          <input
+            type="number"
+            id="numPreviousVisits"
+            name="numPreviousVisits"
+          /><br /><br />
+        </fieldset>
+
+        <fieldset>
+          <legend><strong>1. Quality and Technical Service:</strong></legend>
+          <label>Technicians' skills and experience:</label><br />
+          <input type="radio" name="technicianSkills" value="Poor" /> Poor
+          <input type="radio" name="technicianSkills" value="Fair" /> Fair
+          <input type="radio" name="technicianSkills" value="Good" /> Good
+          <input type="radio" name="technicianSkills" value="Very Good" /> Very
+          Good
+          <input type="radio" name="technicianSkills" value="Excellent" />
+          Excellent<br /><br />
+
+          <label
+            >Do the technicians hold certified maintenance
+            qualifications?</label
+          ><br />
+          <input type="radio" name="certifiedMaintenance" value="Yes" /> Yes
+          <input type="radio" name="certifiedMaintenance" value="No" />
+          No<br /><br />
+
+          <label>Accuracy in diagnosing issues:</label><br />
+          <input type="radio" name="accuracyInDiagnosis" value="Poor" /> Poor
+          <input type="radio" name="accuracyInDiagnosis" value="Fair" /> Fair
+          <input type="radio" name="accuracyInDiagnosis" value="Good" /> Good
+          <input type="radio" name="accuracyInDiagnosis" value="Very Good" />
+          Very Good
+          <input type="radio" name="accuracyInDiagnosis" value="Excellent" />
+          Excellent<br /><br />
+
+          <label>Use of modern maintenance technologies:</label><br />
+          <input type="radio" name="modernTechUsage" value="Never" /> Never
+          <input type="radio" name="modernTechUsage" value="Sometimes" />
+          Sometimes
+          <input type="radio" name="modernTechUsage" value="Often" /> Often
+          <input type="radio" name="modernTechUsage" value="Always" />
+          Always<br /><br />
+
+          <label>Were original spare parts used?</label><br />
+          <input type="radio" name="originalSpareParts" value="Yes" /> Yes
+          <input type="radio" name="originalSpareParts" value="No" />
+          No<br /><br />
+
+          <label>Were future maintenance recommendations provided?</label><br />
+          <input type="radio" name="futureRecommendations" value="Yes" /> Yes
+          <input type="radio" name="futureRecommendations" value="No" />
+          No<br /><br />
+        </fieldset>
+
+        <fieldset>
+          <legend><strong>2. Time Efficiency:</strong></legend>
+          <label>Was the work completed within the promised time?</label><br />
+          <input type="radio" name="workCompletedOnTime" value="Yes" /> Yes
+          <input type="radio" name="workCompletedOnTime" value="No" />
+          No<br /><br />
+
+          <label>Speed of service delivery:</label><br />
+          <input type="radio" name="serviceSpeed" value="Very Slow" /> Very Slow
+          <input type="radio" name="serviceSpeed" value="Slow" /> Slow
+          <input type="radio" name="serviceSpeed" value="Acceptable" />
+          Acceptable
+          <input type="radio" name="serviceSpeed" value="Fast" /> Fast
+          <input type="radio" name="serviceSpeed" value="Very Fast" /> Very
+          Fast<br /><br />
+
+          <label>Flexibility in meeting urgent needs:</label><br />
+          <input type="radio" name="flexibility" value="Not Flexible" /> Not
+          Flexible
+          <input type="radio" name="flexibility" value="Slightly Flexible" />
+          Slightly Flexible
+          <input type="radio" name="flexibility" value="Moderate" /> Moderate
+          <input type="radio" name="flexibility" value="Flexible" /> Flexible
+          <input type="radio" name="flexibility" value="Very Flexible" /> Very
+          Flexible<br /><br />
+
+          <label
+            >Were you informed about the expected maintenance duration
+            beforehand?</label
+          ><br />
+          <input type="radio" name="informedDuration" value="Yes" /> Yes
+          <input type="radio" name="informedDuration" value="No" />
+          No<br /><br />
+        </fieldset>
+
+        <fieldset>
+          <legend><strong>3. Pricing and Transparency:</strong></legend>
+          <label>Fair pricing compared to service quality:</label><br />
+          <input type="radio" name="pricingFairness" value="Very Expensive" />
+          Very Expensive
+          <input type="radio" name="pricingFairness" value="Expensive" />
+          Expensive
+          <input type="radio" name="pricingFairness" value="Reasonable" />
+          Reasonable
+          <input type="radio" name="pricingFairness" value="Affordable" />
+          Affordable
+          <input type="radio" name="pricingFairness" value="Very Affordable" />
+          Very Affordable<br /><br />
+
+          <label>Clarity of the invoice details:</label><br />
+          <input type="radio" name="invoiceClarity" value="Not Clear" /> Not
+          Clear
+          <input type="radio" name="invoiceClarity" value="Slightly Clear" />
+          Slightly Clear
+          <input type="radio" name="invoiceClarity" value="Moderately Clear" />
+          Moderately Clear
+          <input type="radio" name="invoiceClarity" value="Clear" /> Clear
+          <input type="radio" name="invoiceClarity" value="Very Clear" /> Very
+          Clear<br /><br />
+
+          <label>Was the cost of each service explained before execution?</label
+          ><br />
+          <input type="radio" name="costExplained" value="Yes" /> Yes
+          <input type="radio" name="costExplained" value="No" /> No<br /><br />
+
+          <label>Were there any unexpected additional costs?</label><br />
+          <input type="radio" name="unexpectedCosts" value="Yes" /> Yes
+          <input type="radio" name="unexpectedCosts" value="No" />
+          No<br /><br />
+
+          <label>Were any discounts or offers provided when applicable?</label
+          ><br />
+          <input type="radio" name="discountsOffered" value="Never" /> Never
+          <input type="radio" name="discountsOffered" value="Rarely" /> Rarely
+          <input type="radio" name="discountsOffered" value="Sometimes" />
+          Sometimes
+          <input type="radio" name="discountsOffered" value="Often" /> Often
+          <input type="radio" name="discountsOffered" value="Always" />
+          Always<br /><br />
+        </fieldset>
+
+        <fieldset>
+          <legend><strong>4. Customer Interaction:</strong></legend>
+          <label>Professionalism of staff in dealing with customers:</label
+          ><br />
+          <input type="radio" name="staffProfessionalism" value="Rude" /> Rude
+          <input type="radio" name="staffProfessionalism" value="Unfriendly" />
+          Unfriendly
+          <input type="radio" name="staffProfessionalism" value="Neutral" />
+          Neutral
+          <input type="radio" name="staffProfessionalism" value="Friendly" />
+          Friendly
+          <input
+            type="radio"
+            name="staffProfessionalism"
+            value="Very Friendly"
+          />
+          Very Friendly<br /><br />
+
+          <label>Clarity in explaining issues and repairs:</label><br />
+          <input type="radio" name="explanationClarity" value="Very Poor" />
+          Very Poor
+          <input type="radio" name="explanationClarity" value="Poor" /> Poor
+          <input type="radio" name="explanationClarity" value="Average" />
+          Average
+          <input type="radio" name="explanationClarity" value="Good" /> Good
+          <input type="radio" name="explanationClarity" value="Excellent" />
+          Excellent<br /><br />
+
+          <label>Attention to customer inquiries and requests:</label><br />
+          <input type="radio" name="customerAttention" value="Ignored" />
+          Ignored
+          <input
+            type="radio"
+            name="customerAttention"
+            value="Sometimes Considered"
+          />
+          Sometimes Considered
+          <input type="radio" name="customerAttention" value="Neutral" />
+          Neutral
+          <input type="radio" name="customerAttention" value="Considered" />
+          Considered
+          <input
+            type="radio"
+            name="customerAttention"
+            value="Highly Considered"
+          />
+          Highly Considered<br /><br />
+
+          <label
+            >Were you contacted for additional approval when necessary?</label
+          ><br />
+          <input type="radio" name="additionalApproval" value="Yes" /> Yes
+          <input type="radio" name="additionalApproval" value="No" />
+          No<br /><br />
+
+          <label
+            >Satisfaction with responses to inquiries during the visit or over
+            the phone:</label
+          ><br />
+          <input type="radio" name="satisfaction" value="Very Dissatisfied" />
+          Very Dissatisfied
+          <input type="radio" name="satisfaction" value="Dissatisfied" />
+          Dissatisfied
+          <input type="radio" name="satisfaction" value="Neutral" /> Neutral
+          <input type="radio" name="satisfaction" value="Satisfied" /> Satisfied
+          <input type="radio" name="satisfaction" value="Very Satisfied" /> Very
+          Satisfied<br /><br />
+        </fieldset>
+
+        <fieldset>
+          <legend><strong>5. Reviews and Reputation:</strong></legend>
+          <label>Did you hear about the center through recommendations?</label
+          ><br />
+          <input type="radio" name="heardThroughRecommendation" value="Yes" />
+          Yes
+          <input type="radio" name="heardThroughRecommendation" value="No" />
+          No<br /><br />
+
+          <label>Overall rating based on your experience:</label><br />
+          <input type="radio" name="overallRating" value="Very Bad" /> Very Bad
+          <input type="radio" name="overallRating" value="Bad" /> Bad
+          <input type="radio" name="overallRating" value="Neutral" /> Neutral
+          <input type="radio" name="overallRating" value="Good" /> Good
+          <input type="radio" name="overallRating" value="Excellent" />
+          Excellent<br /><br />
+
+          <label>Would you recommend this center to others?</label><br />
+          <input type="radio" name="recommendToOthers" value="Never" /> Never
+          <input type="radio" name="recommendToOthers" value="Unlikely" />
+          Unlikely
+          <input type="radio" name="recommendToOthers" value="Neutral" />
+          Neutral
+          <input type="radio" name="recommendToOthers" value="Likely" /> Likely
+          <input type="radio" name="recommendToOthers" value="Definitely" />
+          Definitely<br /><br />
+
+          <label
+            >Have you faced service issues before, and were they handled
+            satisfactorily?</label
+          ><br />
+          <input type="radio" name="serviceIssuesHandled" value="Yes" /> Yes
+          <input type="radio" name="serviceIssuesHandled" value="No" />
+          No<br /><br />
+        </fieldset>
+
+        <fieldset>
+          <legend><strong>6. Warranty and After-Sales Service:</strong></legend>
+          <label>Was a warranty provided for the repairs?</label><br />
+          <input type="radio" name="warrantyProvided" value="Yes" /> Yes
+          <input type="radio" name="warrantyProvided" value="No" />
+          No<br /><br />
+
+          <label>Clarity of the warranty policy:</label><br />
+          <input type="radio" name="warrantyClarity" value="Not Clear" /> Not
+          Clear
+          <input type="radio" name="warrantyClarity" value="Slightly Clear" />
+          Slightly Clear
+          <input type="radio" name="warrantyClarity" value="Moderately Clear" />
+          Moderately Clear
+          <input type="radio" name="warrantyClarity" value="Clear" /> Clear
+          <input type="radio" name="warrantyClarity" value="Very Clear" /> Very
+          Clear<br /><br />
+
+          <label
+            >Were you informed about what to do if the same problem
+            reoccurs?</label
+          ><br />
+          <input type="radio" name="reoccurrenceInfo" value="Yes" /> Yes
+          <input type="radio" name="reoccurrenceInfo" value="No" />
+          No<br /><br />
+
+          <label>Handling of post-maintenance issues:</label><br />
+          <input type="radio" name="postMaintenanceIssues" value="Very Poor" />
+          Very Poor
+          <input type="radio" name="postMaintenanceIssues" value="Poor" /> Poor
+          <input type="radio" name="postMaintenanceIssues" value="Average" />
+          Average
+          <input type="radio" name="postMaintenanceIssues" value="Good" /> Good
+          <input type="radio" name="postMaintenanceIssues" value="Excellent" />
+          Excellent<br /><br />
+        </fieldset>
+
+        <fieldset>
+          <legend><strong>7. Cleanliness and Organization:</strong></legend>
+          <label>Cleanliness and organization of the service center:</label
+          ><br />
+          <input type="radio" name="cleanliness" value="Very Dirty" /> Very
+          Dirty <input type="radio" name="cleanliness" value="Dirty" /> Dirty
+          <input type="radio" name="cleanliness" value="Acceptable" />
+          Acceptable
+          <input type="radio" name="cleanliness" value="Clean" /> Clean
+          <input type="radio" name="cleanliness" value="Very Clean" /> Very
+          Clean<br /><br />
+
+          <label
+            >Availability of a comfortable waiting area for customers:</label
+          ><br />
+          <input type="radio" name="waitingArea" value="Not Available" /> Not
+          Available <input type="radio" name="waitingArea" value="Poor" /> Poor
+          <input type="radio" name="waitingArea" value="Average" /> Average
+          <input type="radio" name="waitingArea" value="Good" /> Good
+          <input type="radio" name="waitingArea" value="Excellent" />
+          Excellent<br /><br />
+
+          <label
+            >Availability of additional services (WiFi, TV, magazines):</label
+          ><br />
+          <input type="radio" name="additionalServices" value="None" /> None
+          <input type="radio" name="additionalServices" value="Poor" /> Poor
+          <input type="radio" name="additionalServices" value="Acceptable" />
+          Acceptable
+          <input type="radio" name="additionalServices" value="Good" /> Good
+          <input type="radio" name="additionalServices" value="Excellent" />
+          Excellent<br /><br />
+
+          <label>Is the parking area accessible and convenient?</label><br />
+          <input type="radio" name="parking" value="Yes" /> Yes
+          <input type="radio" name="parking" value="No" /> No<br /><br />
+        </fieldset>
+
+        <button type="button" id="submit-feedback-btn">Submit</button>
+      </form>
     </div>
 
-    <form action="#" method="post">
-        <!-- Section 1: Basic Info -->
-        <fieldset>
-            <legend><strong>Basic Information</strong></legend>
-            <label for="date">Date:</label>
-            <input type="date" id="date" name="date"><br><br>
+    <script>
+      const API_BASE_URL = "http://localhost:3000";
+      let allCustomers = []; // To store customer data for autofill
 
-            <label for="customerName">Customer Name:</label>
-            <input type="text" id="customerName" name="customerName"><br><br>
+      /**
+       * Helper function to safely get the value of a selected radio button.
+       */
+      function getRadioValue(name) {
+        const radio = document.querySelector(`input[name="${name}"]:checked`);
+        return radio ? radio.value : null;
+      }
 
-            <label for="phoneNumber">Phone Number:</label>
-            <input type="text" id="phoneNumber" name="phoneNumber"><br><br>
+      /**
+       * Populates the license plate dropdown with customers from the API.
+       */
+      async function populateCustomerDropdown() {
+        const selectElement = document.getElementById("licensePlate");
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/customers`);
+          if (!response.ok) throw new Error("Failed to fetch customers.");
 
-            <label for="carType">Car Type:</label>
-            <input type="text" id="carType" name="carType"><br><br>
+          allCustomers = await response.json(); // Store for later use
 
-            <label for="carModel">Car Model and Year:</label>
-            <input type="text" id="carModel" name="carModel"><br><br>
+          // Clear existing options except the first one
+          selectElement.length = 1;
 
-            <label for="licensePlate">License Plate Number:</label>
-            <input type="text" id="licensePlate" name="licensePlate"><br><br>
+          allCustomers.forEach((customer) => {
+            const option = document.createElement("option");
+            option.value = customer.CarPlate;
+            option.textContent = customer.CarPlate;
+            selectElement.appendChild(option);
+          });
+        } catch (error) {
+          console.error("Error populating customers:", error);
+          alert(
+            "Could not load customer list. Please check the API connection."
+          );
+        }
+      }
 
-            <label for="numPreviousVisits">Number of Previous Visits to the Center:</label>
-            <input type="number" id="numPreviousVisits" name="numPreviousVisits"><br><br>
-        </fieldset>
+      /**
+       * Handles autofilling customer info when a license plate is selected.
+       */
+      function handleCustomerSelection(event) {
+        const selectedPlate = event.target.value;
+        const customerNameInput = document.getElementById("customerName");
+        const phoneNumberInput = document.getElementById("phoneNumber");
 
-        <!-- Section 2: Quality and Technical Service -->
-        <fieldset>
-            <legend><strong>1. Quality and Technical Service:</strong></legend>
-            <label for="technicianSkills">Technicians' skills and experience:</label><br>
-            <input type="radio" id="technicianSkillsPoor" name="technicianSkills" value="Poor"> Poor
-            <input type="radio" id="technicianSkillsFair" name="technicianSkills" value="Fair"> Fair
-            <input type="radio" id="technicianSkillsGood" name="technicianSkills" value="Good"> Good
-            <input type="radio" id="technicianSkillsVeryGood" name="technicianSkills" value="Very Good"> Very Good
-            <input type="radio" id="technicianSkillsExcellent" name="technicianSkills" value="Excellent"> Excellent<br><br>
+        if (!selectedPlate) {
+          customerNameInput.value = "";
+          phoneNumberInput.value = "";
+          return;
+        }
 
-            <label for="certifiedMaintenance">Do the technicians hold certified maintenance qualifications?</label><br>
-            <input type="radio" id="certifiedYes" name="certifiedMaintenance" value="Yes"> Yes
-            <input type="radio" id="certifiedNo" name="certifiedMaintenance" value="No"> No<br><br>
+        const selectedCustomer = allCustomers.find(
+          (c) => c.CarPlate === selectedPlate
+        );
+        if (selectedCustomer) {
+          customerNameInput.value = selectedCustomer.Name;
+          phoneNumberInput.value = selectedCustomer.PhoneNumber;
+        }
+      }
 
-            <label for="accuracyInDiagnosis">Accuracy in diagnosing issues:</label><br>
-            <input type="radio" id="accuracyPoor" name="accuracyInDiagnosis" value="Poor"> Poor
-            <input type="radio" id="accuracyFair" name="accuracyInDiagnosis" value="Fair"> Fair
-            <input type="radio" id="accuracyGood" name="accuracyInDiagnosis" value="Good"> Good
-            <input type="radio" id="accuracyVeryGood" name="accuracyInDiagnosis" value="Very Good"> Very Good
-            <input type="radio" id="accuracyExcellent" name="accuracyInDiagnosis" value="Excellent"> Excellent<br><br>
+      /**
+       * Gathers all form data and sends it to the backend API.
+       */
+      async function submitFeedback() {
+        const feedbackData = {
+          // Basic Info
+          FeedbackDate: document.getElementById("date").value,
+          CustomerName: document.getElementById("customerName").value,
+          PhoneNumber: document.getElementById("phoneNumber").value,
+          CarType: document.getElementById("carType").value,
+          CarModel: document.getElementById("carModel").value,
+          LicensePlate: document.getElementById("licensePlate").value,
+          PreviousVisitsNumber:
+            document.getElementById("numPreviousVisits").value,
+          // Section 1: Quality and Technical Service
+          TechnicianSkills: getRadioValue("technicianSkills"),
+          CertifiedMaintenance: getRadioValue("certifiedMaintenance"),
+          AccuracyInDiagnosis: getRadioValue("accuracyInDiagnosis"),
+          ModernTechUsage: getRadioValue("modernTechUsage"),
+          OriginalSpareParts: getRadioValue("originalSpareParts"),
+          FutureRecommendations: getRadioValue("futureRecommendations"),
+          // Section 2: Time Efficiency
+          WorkCompletedOnTime: getRadioValue("workCompletedOnTime"),
+          ServiceSpeed: getRadioValue("serviceSpeed"),
+          Flexibility: getRadioValue("flexibility"),
+          InformedDuration: getRadioValue("informedDuration"),
+          // Section 3: Pricing and Transparency
+          PricingFairness: getRadioValue("pricingFairness"),
+          InvoiceClarity: getRadioValue("invoiceClarity"),
+          CostExplained: getRadioValue("costExplained"),
+          UnexpectedCosts: getRadioValue("unexpectedCosts"),
+          DiscountsOffered: getRadioValue("discountsOffered"),
+          // Section 4: Customer Interaction
+          StaffProfessionalism: getRadioValue("staffProfessionalism"),
+          ExplanationClarity: getRadioValue("explanationClarity"),
+          CustomerAttention: getRadioValue("customerAttention"),
+          AdditionalApprovalContacted: getRadioValue("additionalApproval"),
+          SatisfactionWithResponses: getRadioValue("satisfaction"),
+          // Section 5: Reviews and Reputation
+          HeardThroughRecommendation: getRadioValue(
+            "heardThroughRecommendation"
+          ),
+          OverallRating: getRadioValue("overallRating"),
+          RecommendToOthers: getRadioValue("recommendToOthers"),
+          ServiceIssuesHandledBefore: getRadioValue("serviceIssuesHandled"),
+          // Section 6: Warranty and After-Sales Service
+          WarrantyProvided: getRadioValue("warrantyProvided"),
+          WarrantyClarity: getRadioValue("warrantyClarity"),
+          ReoccurrenceInfoProvided: getRadioValue("reoccurrenceInfo"),
+          PostMaintenanceIssuesHandling: getRadioValue("postMaintenanceIssues"),
+          // Section 7: Cleanliness and Organization
+          CleanlinessAndOrganization: getRadioValue("cleanliness"),
+          WaitingAreaComfort: getRadioValue("waitingArea"),
+          AdditionalServicesAvailability: getRadioValue("additionalServices"),
+          ParkingConvenience: getRadioValue("parking"),
+        };
 
-            <label for="modernTechUsage">Use of modern maintenance technologies:</label><br>
-            <input type="radio" id="modernTechNever" name="modernTechUsage" value="Never"> Never
-            <input type="radio" id="modernTechSometimes" name="modernTechUsage" value="Sometimes"> Sometimes
-            <input type="radio" id="modernTechOften" name="modernTechUsage" value="Often"> Often
-            <input type="radio" id="modernTechAlways" name="modernTechUsage" value="Always"> Always<br><br>
+        // Basic validation
+        if (!feedbackData.LicensePlate) {
+          alert("Please select a license plate.");
+          return;
+        }
 
-            <label for="originalSpareParts">Were original spare parts used?</label><br>
-            <input type="radio" id="sparePartsYes" name="originalSpareParts" value="Yes"> Yes
-            <input type="radio" id="sparePartsNo" name="originalSpareParts" value="No"> No<br><br>
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/feedback`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(feedbackData),
+          });
 
-            <label for="futureRecommendations">Were future maintenance recommendations provided?</label><br>
-            <input type="radio" id="recommendationsYes" name="futureRecommendations" value="Yes"> Yes
-            <input type="radio" id="recommendationsNo" name="futureRecommendations" value="No"> No<br><br>
-        </fieldset>
+          if (!response.ok) {
+            const errorResult = await response.json();
+            throw new Error(
+              errorResult.message || "Failed to submit feedback."
+            );
+          }
 
-        <!-- Section 3: Time Efficiency -->
-        <fieldset>
-            <legend><strong>2. Time Efficiency:</strong></legend>
-            <label for="workCompletedOnTime">Was the work completed within the promised time?</label><br>
-            <input type="radio" id="workCompletedYes" name="workCompletedOnTime" value="Yes"> Yes
-            <input type="radio" id="workCompletedNo" name="workCompletedOnTime" value="No"> No<br><br>
+          alert("Thank you for your feedback!");
+          document.getElementById("feedback-form").reset();
+        } catch (error) {
+          console.error("Error submitting feedback:", error);
+          alert(`Error: ${error.message}`);
+        }
+      }
 
-            <label for="serviceSpeed">Speed of service delivery:</label><br>
-            <input type="radio" id="speedVerySlow" name="serviceSpeed" value="Very Slow"> Very Slow
-            <input type="radio" id="speedSlow" name="serviceSpeed" value="Slow"> Slow
-            <input type="radio" id="speedAcceptable" name="serviceSpeed" value="Acceptable"> Acceptable
-            <input type="radio" id="speedFast" name="serviceSpeed" value="Fast"> Fast
-            <input type="radio" id="speedVeryFast" name="serviceSpeed" value="Very Fast"> Very Fast<br><br>
-
-            <label for="flexibility">Flexibility in meeting urgent needs:</label><br>
-            <input type="radio" id="flexibilityNot" name="flexibility" value="Not Flexible"> Not Flexible
-            <input type="radio" id="flexibilitySlightly" name="flexibility" value="Slightly Flexible"> Slightly Flexible
-            <input type="radio" id="flexibilityModerate" name="flexibility" value="Moderate"> Moderate
-            <input type="radio" id="flexibilityFlexible" name="flexibility" value="Flexible"> Flexible
-            <input type="radio" id="flexibilityVeryFlexible" name="flexibility" value="Very Flexible"> Very Flexible<br><br>
-
-            <label for="informedDuration">Were you informed about the expected maintenance duration beforehand?</label><br>
-            <input type="radio" id="durationYes" name="informedDuration" value="Yes"> Yes
-            <input type="radio" id="durationNo" name="informedDuration" value="No"> No<br><br>
-        </fieldset>
-
-        <!-- Section 4: Pricing and Transparency -->
-        <fieldset>
-            <legend><strong>3. Pricing and Transparency:</strong></legend>
-            <label for="pricingFairness">Fair pricing compared to service quality:</label><br>
-            <input type="radio" id="pricingVeryExpensive" name="pricingFairness" value="Very Expensive"> Very Expensive
-            <input type="radio" id="pricingExpensive" name="pricingFairness" value="Expensive"> Expensive
-            <input type="radio" id="pricingReasonable" name="pricingFairness" value="Reasonable"> Reasonable
-            <input type="radio" id="pricingAffordable" name="pricingFairness" value="Affordable"> Affordable
-            <input type="radio" id="pricingVeryAffordable" name="pricingFairness" value="Very Affordable"> Very Affordable<br><br>
-
-            <label for="invoiceClarity">Clarity of the invoice details:</label><br>
-            <input type="radio" id="invoiceNotClear" name="invoiceClarity" value="Not Clear"> Not Clear
-            <input type="radio" id="invoiceSlightlyClear" name="invoiceClarity" value="Slightly Clear"> Slightly Clear
-            <input type="radio" id="invoiceModeratelyClear" name="invoiceClarity" value="Moderately Clear"> Moderately Clear
-            <input type="radio" id="invoiceClear" name="invoiceClarity" value="Clear"> Clear
-            <input type="radio" id="invoiceVeryClear" name="invoiceClarity" value="Very Clear"> Very Clear<br><br>
-
-            <label for="costExplained">Was the cost of each service explained before execution?</label><br>
-            <input type="radio" id="costExplainedYes" name="costExplained" value="Yes"> Yes
-            <input type="radio" id="costExplainedNo" name="costExplained" value="No"> No<br><br>
-
-            <label for="unexpectedCosts">Were there any unexpected additional costs?</label><br>
-            <input type="radio" id="unexpectedCostsYes" name="unexpectedCosts" value="Yes"> Yes
-            <input type="radio" id="unexpectedCostsNo" name="unexpectedCosts" value="No"> No<br><br>
-
-            <label for="discountsOffered">Were any discounts or offers provided when applicable?</label><br>
-            <input type="radio" id="discountsNever" name="discountsOffered" value="Never"> Never
-            <input type="radio" id="discountsRarely" name="discountsOffered" value="Rarely"> Rarely
-            <input type="radio" id="discountsSometimes" name="discountsOffered" value="Sometimes"> Sometimes
-            <input type="radio" id="discountsOften" name="discountsOffered" value="Often"> Often
-            <input type="radio" id="discountsAlways" name="discountsOffered" value="Always"> Always<br><br>
-        </fieldset>
-
-        <!-- Section 5: Customer Interaction -->
-        <fieldset>
-            <legend><strong>4. Customer Interaction:</strong></legend>
-            <label for="staffProfessionalism">Professionalism of staff in dealing with customers:</label><br>
-            <input type="radio" id="staffRude" name="staffProfessionalism" value="Rude"> Rude
-            <input type="radio" id="staffUnfriendly" name="staffProfessionalism" value="Unfriendly"> Unfriendly
-            <input type="radio" id="staffNeutral" name="staffProfessionalism" value="Neutral"> Neutral
-            <input type="radio" id="staffFriendly" name="staffProfessionalism" value="Friendly"> Friendly
-            <input type="radio" id="staffVeryFriendly" name="staffProfessionalism" value="Very Friendly"> Very Friendly<br><br>
-
-            <label for="explanationClarity">Clarity in explaining issues and repairs:</label><br>
-            <input type="radio" id="explanationVeryPoor" name="explanationClarity" value="Very Poor"> Very Poor
-            <input type="radio" id="explanationPoor" name="explanationClarity" value="Poor"> Poor
-            <input type="radio" id="explanationAverage" name="explanationClarity" value="Average"> Average
-            <input type="radio" id="explanationGood" name="explanationClarity" value="Good"> Good
-            <input type="radio" id="explanationExcellent" name="explanationClarity" value="Excellent"> Excellent<br><br>
-
-            <label for="customerAttention">Attention to customer inquiries and requests:</label><br>
-            <input type="radio" id="customerIgnored" name="customerAttention" value="Ignored"> Ignored
-            <input type="radio" id="customerSometimes" name="customerAttention" value="Sometimes Considered"> Sometimes Considered
-            <input type="radio" id="customerNeutral" name="customerAttention" value="Neutral"> Neutral
-            <input type="radio" id="customerConsidered" name="customerAttention" value="Considered"> Considered
-            <input type="radio" id="customerHighlyConsidered" name="customerAttention" value="Highly Considered"> Highly Considered<br><br>
-
-            <label for="additionalApproval">Were you contacted for additional approval when necessary?</label><br>
-            <input type="radio" id="additionalApprovalYes" name="additionalApproval" value="Yes"> Yes
-            <input type="radio" id="additionalApprovalNo" name="additionalApproval" value="No"> No<br><br>
-
-            <label for="satisfaction">Satisfaction with responses to inquiries during the visit or over the phone:</label><br>
-            <input type="radio" id="satisfactionVeryDissatisfied" name="satisfaction" value="Very Dissatisfied"> Very Dissatisfied
-            <input type="radio" id="satisfactionDissatisfied" name="satisfaction" value="Dissatisfied"> Dissatisfied
-            <input type="radio" id="satisfactionNeutral" name="satisfaction" value="Neutral"> Neutral
-            <input type="radio" id="satisfactionSatisfied" name="satisfaction" value="Satisfied"> Satisfied
-            <input type="radio" id="satisfactionVerySatisfied" name="satisfaction" value="Very Satisfied"> Very Satisfied<br><br>
-        </fieldset>
-
-        <!-- Section 6: Reviews and Reputation -->
-        <fieldset>
-            <legend><strong>5. Reviews and Reputation:</strong></legend>
-            <label for="heardThroughRecommendation">Did you hear about the center through recommendations?</label><br>
-            <input type="radio" id="heardYes" name="heardThroughRecommendation" value="Yes"> Yes
-            <input type="radio" id="heardNo" name="heardThroughRecommendation" value="No"> No<br><br>
-
-            <label for="overallRating">Overall rating based on your experience:</label><br>
-            <input type="radio" id="overallRatingVeryBad" name="overallRating" value="Very Bad"> Very Bad
-            <input type="radio" id="overallRatingBad" name="overallRating" value="Bad"> Bad
-            <input type="radio" id="overallRatingNeutral" name="overallRating" value="Neutral"> Neutral
-            <input type="radio" id="overallRatingGood" name="overallRating" value="Good"> Good
-            <input type="radio" id="overallRatingExcellent" name="overallRating" value="Excellent"> Excellent<br><br>
-
-            <label for="recommendToOthers">Would you recommend this center to others?</label><br>
-            <input type="radio" id="recommendNever" name="recommendToOthers" value="Never"> Never
-            <input type="radio" id="recommendUnlikely" name="recommendToOthers" value="Unlikely"> Unlikely
-            <input type="radio" id="recommendNeutral" name="recommendToOthers" value="Neutral"> Neutral
-            <input type="radio" id="recommendLikely" name="recommendToOthers" value="Likely"> Likely
-            <input type="radio" id="recommendDefinitely" name="recommendToOthers" value="Definitely"> Definitely<br><br>
-
-            <label for="serviceIssuesHandled">Have you faced service issues before, and were they handled satisfactorily?</label><br>
-            <input type="radio" id="serviceIssuesYes" name="serviceIssuesHandled" value="Yes"> Yes
-            <input type="radio" id="serviceIssuesNo" name="serviceIssuesHandled" value="No"> No<br><br>
-        </fieldset>
-
-        <!-- Section 7: Warranty and After-Sales Service -->
-        <fieldset>
-            <legend><strong>6. Warranty and After-Sales Service:</strong></legend>
-            <label for="warrantyProvided">Was a warranty provided for the repairs?</label><br>
-            <input type="radio" id="warrantyYes" name="warrantyProvided" value="Yes"> Yes
-            <input type="radio" id="warrantyNo" name="warrantyProvided" value="No"> No<br><br>
-
-            <label for="warrantyClarity">Clarity of the warranty policy:</label><br>
-            <input type="radio" id="warrantyNotClear" name="warrantyClarity" value="Not Clear"> Not Clear
-            <input type="radio" id="warrantySlightlyClear" name="warrantyClarity" value="Slightly Clear"> Slightly Clear
-            <input type="radio" id="warrantyModeratelyClear" name="warrantyClarity" value="Moderately Clear"> Moderately Clear
-            <input type="radio" id="warrantyClear" name="warrantyClarity" value="Clear"> Clear
-            <input type="radio" id="warrantyVeryClear" name="warrantyClarity" value="Very Clear"> Very Clear<br><br>
-
-            <label for="reoccurrenceInfo">Were you informed about what to do if the same problem reoccurs?</label><br>
-            <input type="radio" id="reoccurrenceInfoYes" name="reoccurrenceInfo" value="Yes"> Yes
-            <input type="radio" id="reoccurrenceInfoNo" name="reoccurrenceInfo" value="No"> No<br><br>
-
-            <label for="postMaintenanceIssues">Handling of post-maintenance issues:</label><br>
-            <input type="radio" id="postMaintenanceVeryPoor" name="postMaintenanceIssues" value="Very Poor"> Very Poor
-            <input type="radio" id="postMaintenancePoor" name="postMaintenanceIssues" value="Poor"> Poor
-            <input type="radio" id="postMaintenanceAverage" name="postMaintenanceIssues" value="Average"> Average
-            <input type="radio" id="postMaintenanceGood" name="postMaintenanceIssues" value="Good"> Good
-            <input type="radio" id="postMaintenanceExcellent" name="postMaintenanceIssues" value="Excellent"> Excellent<br><br>
-        </fieldset>
-
-        <!-- Section 8: Cleanliness and Organization -->
-        <fieldset>
-            <legend><strong>7. Cleanliness and Organization:</strong></legend>
-            <label for="cleanliness">Cleanliness and organization of the service center:</label><br>
-            <input type="radio" id="cleanlinessVeryDirty" name="cleanliness" value="Very Dirty"> Very Dirty
-            <input type="radio" id="cleanlinessDirty" name="cleanliness" value="Dirty"> Dirty
-            <input type="radio" id="cleanlinessAcceptable" name="cleanliness" value="Acceptable"> Acceptable
-            <input type="radio" id="cleanlinessClean" name="cleanliness" value="Clean"> Clean
-            <input type="radio" id="cleanlinessVeryClean" name="cleanliness" value="Very Clean"> Very Clean<br><br>
-
-            <label for="waitingArea">Availability of a comfortable waiting area for customers:</label><br>
-            <input type="radio" id="waitingAreaNotAvailable" name="waitingArea" value="Not Available"> Not Available
-            <input type="radio" id="waitingAreaPoor" name="waitingArea" value="Poor"> Poor
-            <input type="radio" id="waitingAreaAverage" name="waitingArea" value="Average"> Average
-            <input type="radio" id="waitingAreaGood" name="waitingArea" value="Good"> Good
-            <input type="radio" id="waitingAreaExcellent" name="waitingArea" value="Excellent"> Excellent<br><br>
-
-            <label for="additionalServices">Availability of additional services (WiFi, TV, magazines):</label><br>
-            <input type="radio" id="additionalServicesNone" name="additionalServices" value="None"> None
-            <input type="radio" id="additionalServicesPoor" name="additionalServices" value="Poor"> Poor
-            <input type="radio" id="additionalServicesAcceptable" name="additionalServices" value="Acceptable"> Acceptable
-            <input type="radio" id="additionalServicesGood" name="additionalServices" value="Good"> Good
-            <input type="radio" id="additionalServicesExcellent" name="additionalServices" value="Excellent"> Excellent<br><br>
-
-            <label for="parking">Is the parking area accessible and convenient?</label><br>
-            <input type="radio" id="parkingYes" name="parking" value="Yes"> Yes
-            <input type="radio" id="parkingNo" name="parking" value="No"> No<br><br>
-        </fieldset>
-
-        <button type="submit" onclick="fuzzyLogicEvaluation()">Submit</button>
-    </form>
-</div>
-</body>
+      // --- Event Listeners ---
+      // Populate dropdown when the page loads
+      window.addEventListener("load", () => {
+        document.getElementById("date").valueAsDate = new Date();
+        populateCustomerDropdown();
+      });
+      // Handle autofill when a customer is selected
+      document
+        .getElementById("licensePlate")
+        .addEventListener("change", handleCustomerSelection);
+      // Handle form submission on button click
+      document
+        .getElementById("submit-feedback-btn")
+        .addEventListener("click", submitFeedback);
+    </script>
+  </body>
 </html>
