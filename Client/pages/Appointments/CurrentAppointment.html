@@ -15,6 +15,9 @@
             <button class="home-btn" onclick="window.location.href='/pages/home.html'">Home Page</button>
         </div>
 
+        <div id="loading">Loading appointments...</div>
+        <div id="error" style="display: none; color: red;"></div>
+
         <table>
             <thead>
                 <tr>
@@ -39,40 +42,113 @@
     </div>
 
     <script>
+        const API_BASE_URL = 'http://localhost:3000/api';
+
         window.onload = function () {
-            let carCount = 0;
-            const tableBody = document.getElementById('bookingTableBody');
-            const bookings = JSON.parse(localStorage.getItem("appointments")) || [];
-
-            bookings.forEach((data, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${data.customerName}</td>
-                    <td style="font-weight: bold; color: red; text-transform: uppercase;">${data.carPlate.toUpperCase()}</td>
-                    <td>${data.service}</td>
-                    <td>${data.date}</td>
-                    <td>${data.time}</td>
-                    <td>${data.staff}</td>
-                    <td><button onclick="openInvoice(${index})">Open</button></td>
-                `;
-                tableBody.appendChild(row);
-                carCount++;
-            });
-
-            document.getElementById('carCount').value = carCount;
+            loadAppointments();
         };
 
-        function openInvoice(index) {
-    const bookings = JSON.parse(localStorage.getItem("appointments")) || [];
-    const selected = bookings[index];
+        async function loadAppointments() {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const tableBody = document.getElementById('bookingTableBody');
 
-    localStorage.setItem("selectedAppointment", index);
-    localStorage.setItem("selectedCarPlate", selected.carPlate);
-    localStorage.setItem("selectedCustomerName", selected.customerName); // ✅ أضفنا الاسم هنا
+            try {
+                loading.style.display = 'block';
+                error.style.display = 'none';
 
-    window.location.href = "/pages/sales.html";
-}
+                const response = await fetch(`${API_BASE_URL}/appointments`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch appointments');
+                }
 
+                const appointments = await response.json();
+                console.log(appointments)
+                // Sort appointments by date and time in descending order (most recent first)
+                appointments.sort((a, b) => {
+                    const dateA = new Date(a.date + ' ' + a.time);
+                    const dateB = new Date(b.date + ' ' + b.time);
+                    return dateB - dateA;
+                });
+
+                // Clear existing rows
+                tableBody.innerHTML = '';
+                let carCount = 0;
+                
+                // Get today's date in YYYY-MM-DD format
+                const today = new Date().toISOString().split('T')[0];
+
+                appointments.forEach((data, index) => {
+                    // Only show appointments for today
+                    if (data.AppointmentDate === today) {
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${escapeHtml(data.Customer.Name)}</td>
+                            <td style="font-weight: bold; color: red; text-transform: uppercase;">${escapeHtml(data.CarPlate.toUpperCase())}</td>
+                            <td>${escapeHtml(data.ServiceId)}</td>
+                            <td>${escapeHtml(data.AppointmentDate)}</td>
+                            <td>${escapeHtml(data.AppointmentTime)}</td>
+                            <td>${escapeHtml(data.Staff)}</td>
+                        `;
+                        tableBody.appendChild(row);
+                        carCount++;
+                    }
+                });
+
+                document.getElementById('carCount').value = carCount;
+                
+                if (carCount === 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = '<td colspan="7" style="text-align: center;">No appointments for today</td>';
+                    tableBody.appendChild(row);
+                }
+
+            } catch (err) {
+                error.textContent = 'Error loading appointments: ' + err.message;
+                error.style.display = 'block';
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // Security: Escape HTML to prevent XSS
+        function escapeHtml(unsafe) {
+            if (!unsafe) return '';
+            return unsafe
+                .toString()
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        async function openInvoice(appointmentId) {
+            try {
+                // Fetch the specific appointment details
+                const response = await fetch(`${API_BASE_URL}/appointments/${appointmentId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch appointment details');
+                }
+                
+                const appointment = await response.json();
+                
+                // Store the necessary information
+                localStorage.setItem("selectedAppointment", appointmentId);
+                localStorage.setItem("selectedCarPlate", appointment.carPlate);
+                localStorage.setItem("selectedCustomerName", appointment.customerName);
+                
+                // Navigate to sales page
+                window.location.href = "/pages/sales.html";
+            } catch (err) {
+                document.getElementById('error').textContent = 'Error opening invoice: ' + err.message;
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+
+        // Auto-refresh the appointments every minute
+        setInterval(loadAppointments, 60000);
     </script>
 </body>
 </html>

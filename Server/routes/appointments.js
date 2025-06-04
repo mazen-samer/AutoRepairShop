@@ -1,11 +1,22 @@
 const express = require("express");
-const { Appointment } = require("../src/models"); // Adjust the path as necessary
+const { Appointment, Customer, Service } = require("../src/models"); // Adjust the path as necessary
 const router = express.Router();
 
 // GET /api/appointments: Retrieve a list of all appointments
 router.get("/", async (req, res) => {
     try {
-        const appointments = await Appointment.findAll();
+        const appointments = await Appointment.findAll({
+            include: [
+                {
+                    model: Customer,
+                    attributes: ['Name']
+                },
+                {
+                    model: Service,
+                    attributes: ['Name']
+                }
+            ]
+        });
         res.status(200).json(appointments);
     } catch (error) {
         console.error("Error fetching appointments:", error);
