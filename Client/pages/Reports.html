@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reports Dashboard</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        background-color: #f4f7f6;
+        color: #333;
+      }
+      .reports-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .header {
+        background-color: #2c3e50;
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 1.8em;
+      }
+      .home-btn {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      .home-btn:hover {
+        background-color: #2980b9;
+      }
+      .reports-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+      }
+      .report-card {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      .report-card h2 {
+        margin-top: 0;
+        color: #2c3e50;
+        font-size: 1.3em;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+      }
+      .report-card p,
+      .report-card li {
+        font-size: 1.1em;
+        color: #555;
+        margin-bottom: 8px;
+      }
+      .report-card .metric {
+        font-weight: bold;
+        color: #3498db;
+        font-size: 1.5em;
+      }
+      .report-card ul {
+        list-style: none;
+        padding-left: 0;
+      }
+      .loading-text {
+        font-style: italic;
+        color: #777;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reports-container">
+      <div class="header">
+        <h1>Reports Dashboard</h1>
+        <a class="home-btn" href="home.html">Home Page</a>
+      </div>
+
+      <div class="reports-grid">
+        <div class="report-card">
+          <h2>Customer Insights</h2>
+          <p>
+            Total Registered Customers:
+            <span id="total-customers" class="metric loading-text"
+              >Loading...</span
+            >
+          </p>
+        </div>
+
+        <div class="report-card">
+          <h2>Invoice Overview</h2>
+          <p>
+            Total Invoices Created:
+            <span id="total-invoices" class="metric loading-text"
+              >Loading...</span
+            >
+          </p>
+          <h3>Status Breakdown:</h3>
+          <ul>
+            <li>
+              Paid:
+              <span id="invoices-paid" class="metric loading-text">0</span>
+            </li>
+            <li>
+              Unpaid:
+              <span id="invoices-unpaid" class="metric loading-text">0</span>
+            </li>
+            <li>
+              Partially Paid:
+              <span id="invoices-partially-paid" class="metric loading-text"
+                >0</span
+              >
+            </li>
+            <li>
+              Draft:
+              <span id="invoices-draft" class="metric loading-text">0</span>
+            </li>
+            <li>
+              Cancelled:
+              <span id="invoices-cancelled" class="metric loading-text">0</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="report-card">
+          <h2>Services Overview</h2>
+          <p>
+            Total Unique Services Offered:
+            <span id="total-services" class="metric loading-text"
+              >Loading...</span
+            >
+          </p>
+        </div>
+
+        <div class="report-card">
+          <h2>Workshop Activity</h2>
+          <p>
+            Total Instructions Logged:
+            <span id="total-instructions" class="metric loading-text"
+              >Loading...</span
+            >
+          </p>
+        </div>
+
+        <div class="report-card">
+          <h2>Customer Feedback</h2>
+          <p>
+            Total Feedback Submissions:
+            <span id="total-feedback" class="metric loading-text"
+              >Loading...</span
+            >
+          </p>
+          <p>
+            Average Overall Rating:
+            <span id="avg-rating" class="metric loading-text">Loading...</span>
+          </p>
+          <h3>Recommendation Breakdown:</h3>
+          <ul id="recommendation-breakdown">
+            <li class="loading-text">Loading...</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const API_BASE_URL = "http://localhost:3000"; // Adjust if needed
+
+      // Helper to update DOM elements
+      function updateMetric(elementId, value) {
+        const el = document.getElementById(elementId);
+        if (el) {
+          el.textContent = value;
+          el.classList.remove("loading-text");
+        }
+      }
+
+      // Mapping feedback ratings to numerical values
+      const ratingMap = {
+        "Very Bad": 1,
+        Bad: 2,
+        Neutral: 3,
+        Good: 4,
+        Excellent: 5,
+      };
+      const recommendMap = {
+        Never: 1,
+        Unlikely: 2,
+        Neutral: 3,
+        Likely: 4,
+        Definitely: 5,
+      };
+
+      async function loadReportData() {
+        try {
+          const [
+            customerResponse,
+            invoiceResponse,
+            serviceResponse,
+            instructionResponse,
+            feedbackResponse,
+          ] = await Promise.all([
+            fetch(`${API_BASE_URL}/api/customers`).catch((e) => ({
+              ok: false,
+              error: e,
+            })),
+            fetch(`${API_BASE_URL}/api/invoices`).catch((e) => ({
+              ok: false,
+              error: e,
+            })),
+            fetch(`${API_BASE_URL}/api/services`).catch((e) => ({
+              ok: false,
+              error: e,
+            })),
+            fetch(`${API_BASE_URL}/api/instructions`).catch((e) => ({
+              ok: false,
+              error: e,
+            })),
+            fetch(`${API_BASE_URL}/api/feedback`).catch((e) => ({
+              ok: false,
+              error: e,
+            })),
+          ]);
+
+          // Process Customers
+          if (customerResponse.ok) {
+            const customers = await customerResponse.json();
+            updateMetric("total-customers", customers.length);
+          } else {
+            updateMetric("total-customers", "Error");
+          }
+
+          // Process Invoices
+          if (invoiceResponse.ok) {
+            const invoices = await invoiceResponse.json();
+            updateMetric("total-invoices", invoices.length);
+
+            const statusCounts = {
+              Paid: 0,
+              Unpaid: 0,
+              "Partially Paid": 0,
+              Draft: 0,
+              Cancelled: 0,
+            };
+            invoices.forEach((inv) => {
+              if (statusCounts.hasOwnProperty(inv.Status)) {
+                statusCounts[inv.Status]++;
+              }
+            });
+            updateMetric("invoices-paid", statusCounts.Paid);
+            updateMetric("invoices-unpaid", statusCounts.Unpaid);
+            updateMetric(
+              "invoices-partially-paid",
+              statusCounts["Partially Paid"]
+            );
+            updateMetric("invoices-draft", statusCounts.Draft);
+            updateMetric("invoices-cancelled", statusCounts.Cancelled);
+          } else {
+            updateMetric("total-invoices", "Error");
+            [
+              "invoices-paid",
+              "invoices-unpaid",
+              "invoices-partially-paid",
+              "invoices-draft",
+              "invoices-cancelled",
+            ].forEach((id) => updateMetric(id, "N/A"));
+          }
+
+          // Process Services
+          if (serviceResponse.ok) {
+            const services = await serviceResponse.json();
+            updateMetric("total-services", services.length);
+          } else {
+            updateMetric("total-services", "Error");
+          }
+
+          // Process Instructions
+          if (instructionResponse.ok) {
+            const instructions = await instructionResponse.json();
+            updateMetric("total-instructions", instructions.length);
+          } else {
+            updateMetric("total-instructions", "Error");
+          }
+
+          // Process Feedback
+          if (feedbackResponse.ok) {
+            const feedbacks = await feedbackResponse.json();
+            updateMetric("total-feedback", feedbacks.length);
+
+            if (feedbacks.length > 0) {
+              let totalRatingScore = 0;
+              let validRatingsCount = 0;
+              const recommendCounts = {};
+
+              feedbacks.forEach((fb) => {
+                if (fb.OverallRating && ratingMap[fb.OverallRating]) {
+                  totalRatingScore += ratingMap[fb.OverallRating];
+                  validRatingsCount++;
+                }
+                if (fb.RecommendToOthers) {
+                  recommendCounts[fb.RecommendToOthers] =
+                    (recommendCounts[fb.RecommendToOthers] || 0) + 1;
+                }
+              });
+
+              const avgRating =
+                validRatingsCount > 0
+                  ? (totalRatingScore / validRatingsCount).toFixed(1) + "/5"
+                  : "N/A";
+              updateMetric("avg-rating", avgRating);
+
+              const recommendationList = document.getElementById(
+                "recommendation-breakdown"
+              );
+              recommendationList.innerHTML = ""; // Clear loading
+              if (Object.keys(recommendCounts).length > 0) {
+                for (const key in recommendCounts) {
+                  const li = document.createElement("li");
+                  li.textContent = `${key}: ${recommendCounts[key]}`;
+                  recommendationList.appendChild(li);
+                }
+              } else {
+                recommendationList.innerHTML =
+                  "<li>No recommendation data</li>";
+              }
+            } else {
+              updateMetric("avg-rating", "N/A");
+              document.getElementById("recommendation-breakdown").innerHTML =
+                "<li>No feedback data</li>";
+            }
+          } else {
+            updateMetric("total-feedback", "Error");
+            updateMetric("avg-rating", "Error");
+            document.getElementById("recommendation-breakdown").innerHTML =
+              "<li>Error loading</li>";
+          }
+        } catch (error) {
+          console.error("Error fetching report data:", error);
+          // Update all metrics to show a general error if Promise.all fails (though individual catches are better)
+          [
+            "total-customers",
+            "total-invoices",
+            "total-services",
+            "total-instructions",
+            "total-feedback",
+            "avg-rating",
+          ].forEach((id) => updateMetric(id, "Error"));
+        }
+      }
+
+      window.addEventListener("load", loadReportData);
+    </script>
+  </body>
+</html>
