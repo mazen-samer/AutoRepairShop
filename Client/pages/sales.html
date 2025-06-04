@@ -36,6 +36,11 @@
           transform: rotate(360deg);
         }
       }
+      .form-section {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #eee;
+      }
     </style>
   </head>
   <body>
@@ -43,16 +48,66 @@
 
     <div class="header">
       <h1>New Invoice</h1>
-      <button
-        class="home-btn"
-        onclick="window.location.href='/pages/home.html'"
-      >
-        Home Page
-      </button>
+      <a class="home-btn" href="home.html">Home Page</a>
     </div>
 
-    <section>
-      <h2>1️⃣ Invoice Details</h2>
+    <section class="form-section">
+      <h2>1️⃣ Add a New Customer</h2>
+      <form id="add-customer-form">
+        <label for="new-car-plate" style="font-weight: bold; color: red"
+          >Car Plate:</label
+        >
+        <input
+          type="text"
+          id="new-car-plate"
+          placeholder="car plate (ABC1234)"
+          oninput="this.value = this.value.toUpperCase()"
+          required
+          style="text-transform: uppercase"
+        />
+        <label
+          >Customer Name:
+          <input type="text" id="new-customer-name" placeholder="Customer name"
+        /></label>
+        <label
+          >Phone Number: <input type="tel" id="new-customer-phone"
+        /></label>
+        <label>Email: <input type="email" id="new-customer-email" /></label>
+        <label
+          >Billing Address: <input type="text" id="new-billing-address"
+        /></label>
+        <label
+          >Shipping Address: <input type="text" id="new-shipping-address"
+        /></label>
+        <label
+          >Tax ID Number:
+          <input type="text" id="new-tax-id" placeholder="If applicable"
+        /></label>
+        <label
+          >Customer Status:
+          <input
+            type="text"
+            id="new-customer-status"
+            placeholder="e.g., New, Returning, VIP"
+        /></label>
+
+        <button type="button" id="save-customer-btn">Save New Customer</button>
+      </form>
+    </section>
+
+    <section class="form-section">
+      <h2>2️⃣ Create a New Invoice</h2>
+
+      <div>
+        <label for="customer-select" style="font-weight: bold"
+          >Select Customer for Invoice:</label
+        >
+        <select id="customer-select" required>
+          <option value="">-- Please select a customer --</option>
+        </select>
+      </div>
+
+      <h3>Invoice Details</h3>
       <div>
         <label>Invoice Date: <input type="date" id="invoice-date" /></label>
         <label>Due Date: <input type="date" id="due-date" /></label>
@@ -77,46 +132,6 @@
             placeholder="Additional invoice notes"
           ></textarea>
         </label>
-      </div>
-    </section>
-
-    <section>
-      <h2>2️⃣ Customer Information</h2>
-      <div>
-        <label
-          >Customer Name:
-          <input type="text" id="customer-name" placeholder="Customer name"
-        /></label>
-        <label for="car-plate" style="font-weight: bold; color: red"
-          >Car Plate:</label
-        >
-        <input
-          type="text"
-          id="car-plate"
-          placeholder="car plate (ABC1234)"
-          oninput="this.value = this.value.toUpperCase()"
-          required
-          style="text-transform: uppercase"
-        />
-        <label>Phone Number: <input type="tel" id="customer-phone" /></label>
-        <label>Email: <input type="email" id="customer-email" /></label>
-        <label
-          >Billing Address: <input type="text" id="billing-address"
-        /></label>
-        <label
-          >Shipping Address: <input type="text" id="shipping-address"
-        /></label>
-        <label
-          >Tax ID Number:
-          <input type="text" id="tax-id" placeholder="If applicable"
-        /></label>
-        <label
-          >Customer Status:
-          <input
-            type="text"
-            id="customer-status"
-            placeholder="e.g., New, Returning, VIP"
-        /></label>
         <label
           >Customer Notes (Mileage, etc):
           <textarea
@@ -127,8 +142,8 @@
       </div>
     </section>
 
-    <section>
-      <h2>3️⃣ Products / Services</h2>
+    <section class="form-section">
+      <h3>Products / Services</h3>
       <div>
         <table border="1" id="product-table">
           <thead>
@@ -152,7 +167,7 @@
     </section>
 
     <section>
-      <h2>4️⃣ Payment Methods</h2>
+      <h3>Payment</h3>
       <div>
         <label
           >Payment Method:
@@ -161,8 +176,8 @@
             <option>Bank Transfer</option>
             <option>Credit / Debit Card</option>
             <option>Online Payment</option>
-          </select></label
-        >
+          </select>
+        </label>
         <label
           >Amount Paid:
           <input type="number" id="amount-paid" placeholder="0.00"
@@ -177,57 +192,119 @@
     </div>
 
     <script>
-      // Define the base URL for your API server
       const API_BASE_URL = "http://localhost:3000";
-
       const loader = document.getElementById("loader");
       const showLoader = (show) => {
         loader.style.display = show ? "block" : "none";
       };
 
+      // --- ON PAGE LOAD ---
       window.onload = function () {
-        const carPlate = localStorage.getItem("selectedCarPlate");
-        if (carPlate) {
-          document.getElementById("car-plate").value = carPlate.toUpperCase();
-        }
-        // Set initial state
-        resetForm();
+        populateCustomerDropdown();
+        resetInvoiceForm();
       };
+
+      // --- CUSTOMER-RELATED FUNCTIONS ---
+
+      /**
+       * Fetches all customers from the API and populates the dropdown list.
+       */
+      async function populateCustomerDropdown() {
+        const selectElement = document.getElementById("customer-select");
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/customers`);
+          if (!response.ok) throw new Error("Failed to fetch customers");
+          const customers = await response.json();
+
+          selectElement.innerHTML =
+            '<option value="">-- Please select a customer --</option>'; // Clear existing options
+
+          customers.forEach((customer) => {
+            const option = document.createElement("option");
+            option.value = customer.CarPlate;
+            option.textContent = `${customer.Name} - ${customer.CarPlate}`;
+            selectElement.appendChild(option);
+          });
+        } catch (error) {
+          console.error("Failed to populate customers:", error);
+          alert("Error: Could not load customer list.");
+        }
+      }
+
+      /**
+       * Handles saving a new customer from the dedicated form.
+       */
+      async function handleSaveCustomer() {
+        const carPlate = document.getElementById("new-car-plate").value;
+        if (!carPlate) {
+          alert("Car Plate is required to add a new customer.");
+          return;
+        }
+
+        const customerData = {
+          CarPlate: carPlate,
+          Name: document.getElementById("new-customer-name").value,
+          PhoneNumber: document.getElementById("new-customer-phone").value,
+          Email: document.getElementById("new-customer-email").value,
+          BillingAddress: document.getElementById("new-billing-address").value,
+          ShippingAddress: document.getElementById("new-shipping-address")
+            .value,
+          TaxIdentificationNumber: document.getElementById("new-tax-id").value,
+          Status: document.getElementById("new-customer-status").value,
+        };
+
+        showLoader(true);
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/customers`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(customerData),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json(); // Use .json() if server sends JSON error
+            throw new Error(
+              errorData.message ||
+                `Customer Save Failed: ${response.statusText}`
+            );
+          }
+
+          alert("Customer saved successfully!");
+          document.getElementById("add-customer-form").reset(); // Clear the add customer form
+          await populateCustomerDropdown(); // Refresh the dropdown list!
+        } catch (error) {
+          console.error("Failed to save customer:", error);
+          alert(`Error: ${error.message}`);
+        } finally {
+          showLoader(false);
+        }
+      }
+
+      // Attach event listener to the new button
+      document
+        .getElementById("save-customer-btn")
+        .addEventListener("click", handleSaveCustomer);
+
+      // --- INVOICE-RELATED FUNCTIONS ---
 
       function printInvoice() {
         window.print();
       }
 
-      /**
-       * Clears all form fields and resets the product table.
-       */
-      function resetForm() {
-        // --- Reset Invoice Details ---
+      function resetInvoiceForm() {
         document.getElementById("invoice-date").valueAsDate = new Date();
         document.getElementById("due-date").value = "";
         document.getElementById("order-ref").value = "";
         document.getElementById("invoice-status").selectedIndex = 0;
         document.getElementById("internal-ref").value = "";
         document.getElementById("invoice-notes").value = "";
-
-        // --- Reset Customer Information ---
-        document.getElementById("customer-name").value = "";
-        // We keep the car plate if it was passed from another page
-        // document.getElementById('car-plate').value = '';
-        document.getElementById("customer-phone").value = "";
-        document.getElementById("customer-email").value = "";
-        document.getElementById("billing-address").value = "";
-        document.getElementById("shipping-address").value = "";
-        document.getElementById("tax-id").value = "";
-        document.getElementById("customer-status").value = "";
         document.getElementById("customer-notes").value = "";
+        document.getElementById("customer-select").selectedIndex = 0;
 
-        // --- Reset Products/Services Table ---
         const tableBody = document.querySelector("#product-table tbody");
-        tableBody.innerHTML = ""; // Clear all existing rows
-        addProductRow(); // Add a single new, blank row
+        tableBody.innerHTML = "";
+        addProductRow();
 
-        // --- Reset Payment Methods ---
         document.getElementById("payment-method").selectedIndex = 0;
         document.getElementById("amount-paid").value = "";
       }
@@ -248,15 +325,15 @@
         const rowCount = table.rows.length + 1;
         const newRow = document.createElement("tr");
         newRow.innerHTML = `
-            <td class="row-number">${rowCount}</td>
-            <td><input type="text" class="product-name" placeholder="e.g., Oil Change"></td>
-            <td><input type="text" class="description" placeholder="e.g., Synthetic 5W-30"></td>
-            <td><input type="number" class="quantity" value="1" oninput="recalculateTotal(this)"></td>
-            <td><input type="number" class="unit-price" placeholder="0.00" oninput="recalculateTotal(this)"></td>
-            <td><input type="number" class="tax" placeholder="14" oninput="recalculateTotal(this)"></td>
-            <td><input type="number" class="discount" placeholder="0.00" oninput="recalculateTotal(this)"></td>
-            <td class="total">0.00 EGP</td>
-            <td><input type="checkbox" class="row-select"></td>
+          <td class="row-number">${rowCount}</td>
+          <td><input type="text" class="product-name" placeholder="e.g., Oil Change"></td>
+          <td><input type="text" class="description" placeholder="e.g., Synthetic 5W-30"></td>
+          <td><input type="number" class="quantity" value="1" oninput="recalculateTotal(this)"></td>
+          <td><input type="number" class="unit-price" placeholder="0.00" oninput="recalculateTotal(this)"></td>
+          <td><input type="number" class="tax" placeholder="14" oninput="recalculateTotal(this)"></td>
+          <td><input type="number" class="discount" placeholder="0.00" oninput="recalculateTotal(this)"></td>
+          <td class="total">0.00 EGP</td>
+          <td><input type="checkbox" class="row-select"></td>
         `;
         table.appendChild(newRow);
         recalculateTotal(newRow.querySelector(".quantity"));
@@ -293,83 +370,31 @@
 
       async function saveInvoice() {
         showLoader(true);
+        // Step 1: Get the selected customer's car plate from the dropdown
+        const selectedCarPlate =
+          document.getElementById("customer-select").value;
+        if (!selectedCarPlate) {
+          alert("Please select a customer for the invoice.");
+          showLoader(false);
+          return;
+        }
+
         try {
-          const customer = await saveCustomer();
-          if (!customer)
-            throw new Error(
-              "Could not save customer. The operation returned no data."
-            );
+          // Step 2: Create the invoice record linked to the selected customer
+          const invoice = await createInvoiceRecord(selectedCarPlate);
+          if (!invoice) throw new Error("Could not create invoice record.");
 
-          const invoice = await createInvoiceRecord(customer.CarPlate);
-          if (!invoice)
-            throw new Error(
-              "Could not create invoice record. The operation returned no data."
-            );
-
+          // Step 3: Save the line items for that invoice
           await saveInvoiceLineItems(invoice.InvoiceId);
 
           alert("Invoice saved successfully!");
-
-          // --- NEW --- Call the reset function on success
-          resetForm();
+          resetInvoiceForm();
         } catch (error) {
           console.error("Failed to save the invoice:", error);
           alert(`Error: ${error.message}`);
-          // On error, we do nothing to the form, leaving the fields filled.
         } finally {
           showLoader(false);
         }
-      }
-
-      async function saveCustomer() {
-        const carPlate = document.getElementById("car-plate").value;
-        if (!carPlate) {
-          alert("Car Plate is required.");
-          return null;
-        }
-
-        const customerData = {
-          CarPlate: carPlate,
-          Name: document.getElementById("customer-name").value,
-          PhoneNumber: document.getElementById("customer-phone").value,
-          Email: document.getElementById("customer-email").value,
-          BillingAddress: document.getElementById("billing-address").value,
-          ShippingAddress: document.getElementById("shipping-address").value,
-          TaxIdentificationNumber: document.getElementById("tax-id").value,
-          Status: document.getElementById("customer-status").value,
-        };
-
-        const getResponse = await fetch(
-          `${API_BASE_URL}/api/customers/${carPlate}`
-        );
-        let method, url;
-
-        if (getResponse.status === 404) {
-          method = "POST";
-          url = "/api/customers";
-        } else if (getResponse.ok) {
-          method = "PUT";
-          url = `/api/customers/${carPlate}`;
-        } else {
-          throw new Error(
-            `Failed to check for existing customer. Status: ${getResponse.status}`
-          );
-        }
-
-        const response = await fetch(`${API_BASE_URL}${url}`, {
-          method: method,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(customerData),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.text();
-          throw new Error(
-            `Customer Save Failed: ${response.statusText}. Details: ${errorData}`
-          );
-        }
-
-        return await processResponse(response);
       }
 
       async function createInvoiceRecord(carPlate) {
@@ -406,7 +431,6 @@
         const productRows = document.querySelectorAll(
           "#product-table tbody tr"
         );
-
         for (const row of productRows) {
           const serviceName = row.querySelector(".product-name").value;
           if (!serviceName) continue;

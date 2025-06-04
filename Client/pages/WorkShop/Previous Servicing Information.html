@@ -9,98 +9,229 @@
       href="../../css/WorhShop/Previous Servicing Information.css"
     />
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- <script src="/js/Previous Servicing Information.js" defer></script> -->
   </head>
   <body class="bg-gray-100 text-gray-900">
-    <!-- Page Header -->
     <div class="header">
       <button class="back-btn" onclick="window.location.href='Workshop.html'">
         Back
       </button>
       Previous Servicing Information
-      <!-- <button class="home-btn">Home</button> -->
       <button class="home-btn" onclick="window.location.href='../home.html'">
         Home Page
       </button>
     </div>
-    <!-- </div> -->
 
-    <!-- Search Bar & Filters -->
     <div class="filter-container">
       <input
+        id="searchInput"
         type="text"
-        placeholder="🔍 Search by Plate Number / VIN"
+        placeholder="🔍 Search by Plate Number"
         class="filter-input"
       />
-      <select class="filter-dropdown">
-        <option>🔧 All Services</option>
-        <option>🛢️ Oil Change</option>
-        <option>⚙️ Brake Repair</option>
+      <input id="dateFilter" type="date" class="filter-input" />
+      <select id="statusFilter" class="filter-dropdown">
+        <option value="">All Statuses</option>
+        <option>Draft</option>
+        <option>Unpaid</option>
+        <option>Partially Paid</option>
+        <option>Paid</option>
+        <option>Cancelled</option>
       </select>
-      <select class="filter-dropdown">
-        <option>👨‍🔧 All Mechanics</option>
-        <option>Ahmed Ali</option>
-        <option>Omar Tarek</option>
-      </select>
-      <button class="filter-button">🔄 Refresh Data</button>
+      <button id="refreshBtn" class="filter-button">🔄 Refresh Data</button>
     </div>
 
-    <!-- Service History Table -->
     <div class="table-container">
       <table class="service-table">
         <thead>
           <tr>
             <th>📅 Date</th>
-            <th>🔧 Service Type</th>
-            <th>🚗 Mileage</th>
+            <th>🚗 Car Plate</th>
             <th>💰 Cost</th>
-            <th>👨‍🔧 Mechanic</th>
             <th>📜 Status</th>
             <th>🔍 Details</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>12/02/2024</td>
-            <td>🛢️ Oil Change</td>
-            <td>45,000 km</td>
-            <td>$50</td>
-            <td>Ahmed Ali</td>
-            <td class="status-completed">✔ Completed</td>
-            <td class="view-details" onclick="openModal()">View</td>
-          </tr>
-          <tr>
-            <td>05/01/2024</td>
-            <td>⚙️ Brake Repair</td>
-            <td>43,000 km</td>
-            <td>$150</td>
-            <td>Omar Tarek</td>
-            <td class="status-pending">⏳ In Progress</td>
-            <td class="view-details" onclick="openModal()">View</td>
-          </tr>
-        </tbody>
+        <tbody id="service-table-body"></tbody>
       </table>
     </div>
 
-    <!-- Modal for Service Details -->
     <div id="detailsModal" class="modal hidden">
       <div class="modal-content">
-        <h2>Service Details</h2>
-        <p><strong>📅 Date:</strong> 12/02/2024</p>
-        <p><strong>🔧 Service Type:</strong> Oil Change</p>
-        <p><strong>🚗 Mileage:</strong> 45,000 km</p>
-        <p><strong>👨‍🔧 Mechanic:</strong> Ahmed Ali</p>
-        <p><strong>💰 Cost:</strong> $50</p>
-        <p><strong>🛠️ Warranty:</strong> 3 months</p>
-        <p><strong>📜 Notes:</strong> Used original oil replacement.</p>
+        <h2 class="text-xl font-bold mb-4">Invoice Details</h2>
+        <p><strong>Invoice ID:</strong> <span id="modal-invoice-id"></span></p>
+        <p><strong>Date:</strong> <span id="modal-date"></span></p>
+        <p><strong>Car Plate:</strong> <span id="modal-car-plate"></span></p>
+        <p><strong>Status:</strong> <span id="modal-status"></span></p>
+        <p>
+          <strong>Amount Paid:</strong> <span id="modal-amount-paid"></span>
+        </p>
+        <p>
+          <strong>Payment Method:</strong>
+          <span id="modal-payment-method"></span>
+        </p>
+        <p><strong>Notes:</strong> <span id="modal-notes"></span></p>
         <button class="close-modal" onclick="closeModal()">Close</button>
       </div>
     </div>
 
     <script>
-      function openModal() {
-        document.getElementById("detailsModal").classList.remove("hidden");
+      const API_BASE_URL = "http://localhost:3000";
+      let allInvoices = []; // To store the original full list of invoices
+
+      // --- DOM Elements (UPDATED) ---
+      const tableBody = document.getElementById("service-table-body");
+      const searchInput = document.getElementById("searchInput");
+      const dateFilter = document.getElementById("dateFilter");
+      const statusFilter = document.getElementById("statusFilter");
+      const refreshBtn = document.getElementById("refreshBtn");
+
+      // --- ON PAGE LOAD ---
+      window.addEventListener("load", initializePage);
+
+      async function initializePage() {
+        await fetchAndRenderInvoices();
+        // Setup event listeners for all filters
+        searchInput.addEventListener("input", applyFilters);
+        dateFilter.addEventListener("input", applyFilters);
+        statusFilter.addEventListener("change", applyFilters);
+        refreshBtn.addEventListener("click", fetchAndRenderInvoices);
       }
+
+      /**
+       * Fetches all invoices from the server and renders them.
+       */
+      async function fetchAndRenderInvoices() {
+        tableBody.innerHTML = `<tr><td colspan="5" class="text-center p-4">🔄 Loading data...</td></tr>`;
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/invoices`);
+          if (!response.ok)
+            throw new Error(`HTTP error! status: ${response.status}`);
+          allInvoices = await response.json();
+          renderTable(allInvoices);
+        } catch (error) {
+          console.error("Failed to fetch invoices:", error);
+          tableBody.innerHTML = `<tr><td colspan="5" class="text-center p-4 text-red-500">❌ Failed to load data.</td></tr>`;
+        }
+      }
+
+      /**
+       * Renders an array of invoices into the table. (UPDATED table structure)
+       */
+      function renderTable(invoices) {
+        tableBody.innerHTML = ""; // Clear existing rows
+        if (invoices.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="5" class="text-center p-4">No matching records found.</td></tr>`;
+          return;
+        }
+
+        invoices.forEach((invoice) => {
+          const row = document.createElement("tr");
+          const cost = `${invoice.AmountPaid} EGP`;
+          const statusClass = `status-${invoice.Status.toLowerCase().replace(
+            " ",
+            "-"
+          )}`;
+
+          row.innerHTML = `
+                    <td>${new Date(
+                      invoice.InvoiceDate
+                    ).toLocaleDateString()}</td>
+                    <td>${invoice.CarPlate}</td>
+                    <td>${cost}</td>
+                    <td class="${statusClass}">${invoice.Status}</td>
+                    <td class="view-details" data-invoice-id="${
+                      invoice.InvoiceId
+                    }">View</td>
+                `;
+          tableBody.appendChild(row);
+        });
+
+        // Add event listeners to the new "View" buttons
+        document.querySelectorAll(".view-details").forEach((button) => {
+          button.addEventListener("click", (e) => {
+            const invoiceId = e.target.getAttribute("data-invoice-id");
+            openModal(invoiceId);
+          });
+        });
+      }
+
+      /**
+       * Applies all active filters to the `allInvoices` array and re-renders the table. (REWRITTEN)
+       */
+      function applyFilters() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedDate = dateFilter.value; // YYYY-MM-DD
+        const selectedStatus = statusFilter.value;
+
+        let filteredInvoices = allInvoices.filter((invoice) => {
+          const plateMatch = searchTerm
+            ? invoice.CarPlate.toLowerCase().includes(searchTerm)
+            : true;
+
+          // The invoice.InvoiceDate is a full ISO string (e.g., "2025-06-04T...").
+          // We check if it starts with the selected date string to match the day.
+          const dateMatch = selectedDate
+            ? invoice.InvoiceDate.startsWith(selectedDate)
+            : true;
+
+          const statusMatch = selectedStatus
+            ? invoice.Status === selectedStatus
+            : true;
+
+          return plateMatch && dateMatch && statusMatch;
+        });
+
+        renderTable(filteredInvoices);
+      }
+
+      /**
+       * Opens the details modal and fetches data for a specific invoice.
+       */
+      async function openModal(invoiceId) {
+        const modal = document.getElementById("detailsModal");
+        modal.classList.remove("hidden");
+
+        document.getElementById("modal-invoice-id").textContent = "Loading...";
+        // Clear other fields while loading
+        [
+          "modal-date",
+          "modal-car-plate",
+          "modal-status",
+          "modal-amount-paid",
+          "modal-payment-method",
+          "modal-notes",
+        ].forEach((id) => (document.getElementById(id).textContent = ""));
+
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/api/invoices/${invoiceId}`
+          );
+          if (!response.ok) throw new Error("Invoice not found");
+          const invoice = await response.json();
+
+          // Populate modal with fetched data
+          document.getElementById("modal-invoice-id").textContent =
+            invoice.InvoiceId;
+          document.getElementById("modal-date").textContent = new Date(
+            invoice.InvoiceDate
+          ).toLocaleDateString();
+          document.getElementById("modal-car-plate").textContent =
+            invoice.CarPlate;
+          document.getElementById("modal-status").textContent = invoice.Status;
+          document.getElementById(
+            "modal-amount-paid"
+          ).textContent = `${invoice.AmountPaid} EGP`;
+          document.getElementById("modal-payment-method").textContent =
+            invoice.PaymentMethod;
+          document.getElementById("modal-notes").textContent =
+            invoice.AdditionalNotes || "No notes provided.";
+        } catch (error) {
+          console.error("Failed to fetch invoice details:", error);
+          document.getElementById("modal-invoice-id").textContent =
+            "Error loading details.";
+        }
+      }
+
       function closeModal() {
         document.getElementById("detailsModal").classList.add("hidden");
       }
