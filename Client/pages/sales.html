@@ -5,8 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>New Invoice</title>
     <link rel="stylesheet" href="../css/sales.css" />
+    <style>
+      #product-table input {
+        width: 95%;
+        border: 1px solid #ccc;
+        padding: 4px;
+        border-radius: 4px;
+      }
+      #product-table .total {
+        font-weight: bold;
+      }
+      .loader {
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #3498db;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 2s linear infinite;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        z-index: 1000;
+        display: none;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
   </head>
   <body>
+    <div id="loader" class="loader"></div>
+
     <div class="header">
       <h1>New Invoice</h1>
       <button
@@ -19,13 +53,13 @@
 
     <section>
       <h2>1️⃣ Invoice Details</h2>
-      <div class="Invoice Details">
-        <label>Invoice Date: <input type="date" /></label>
-        <label>Due Date: <input type="date" /></label>
-        <label>Order Reference: <input type="text" /></label>
+      <div>
+        <label>Invoice Date: <input type="date" id="invoice-date" /></label>
+        <label>Due Date: <input type="date" id="due-date" /></label>
+        <label>Order Reference: <input type="text" id="order-ref" /></label>
         <label
           >Status:
-          <select>
+          <select id="invoice-status">
             <option>Draft</option>
             <option>Unpaid</option>
             <option>Partially Paid</option>
@@ -33,19 +67,25 @@
             <option>Cancelled</option>
           </select>
         </label>
-        <label>Internal Reference: <input type="text" /></label>
         <label
-          >Notes: <textarea placeholder="Additional invoice notes"></textarea>
+          >Internal Reference: <input type="text" id="internal-ref"
+        /></label>
+        <label
+          >Invoice Notes:
+          <textarea
+            id="invoice-notes"
+            placeholder="Additional invoice notes"
+          ></textarea>
         </label>
       </div>
     </section>
 
     <section>
       <h2>2️⃣ Customer Information</h2>
-      <div class="customer-info">
+      <div>
         <label
-          >Customer:
-          <input type="text" id="customer-name" placeholder="customer name"
+          >Customer Name:
+          <input type="text" id="customer-name" placeholder="Customer name"
         /></label>
         <label for="car-plate" style="font-weight: bold; color: red"
           >Car Plate:</label
@@ -53,32 +93,34 @@
         <input
           type="text"
           id="car-plate"
-          name="car_plate"
           placeholder="car plate (ABC1234)"
           oninput="this.value = this.value.toUpperCase()"
           required
           style="text-transform: uppercase"
         />
-        <label>Phone Number: <input type="tel" /></label>
-        <label>Email: <input type="email" /></label>
-        <label>Billing Address: <input type="text" /></label>
-        <label>Shipping Address: <input type="text" /></label>
+        <label>Phone Number: <input type="tel" id="customer-phone" /></label>
+        <label>Email: <input type="email" id="customer-email" /></label>
         <label
-          >Tax Identification Number:
-          <input type="text" placeholder="If applicable"
+          >Billing Address: <input type="text" id="billing-address"
+        /></label>
+        <label
+          >Shipping Address: <input type="text" id="shipping-address"
+        /></label>
+        <label
+          >Tax ID Number:
+          <input type="text" id="tax-id" placeholder="If applicable"
         /></label>
         <label
           >Customer Status:
-          <select>
-            <option>New</option>
-            <option>Returning</option>
-            <option>VIP</option>
-            <option>Has Outstanding Balance</option>
-          </select>
-        </label>
+          <input
+            type="text"
+            id="customer-status"
+            placeholder="e.g., New, Returning, VIP"
+        /></label>
         <label
-          >Additional Notes:
+          >Customer Notes (Mileage, etc):
           <textarea
+            id="customer-notes"
             placeholder="Special requests or additional details"
           ></textarea>
         </label>
@@ -87,7 +129,7 @@
 
     <section>
       <h2>3️⃣ Products / Services</h2>
-      <div class="products-services">
+      <div>
         <table border="1" id="product-table">
           <thead>
             <tr>
@@ -102,53 +144,7 @@
               <th>Select</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>
-                <select onchange="updateRow(this)">
-                  <option value="" disabled selected>Select item</option>
-                  <option
-                    data-description="High-quality item"
-                    data-price="100"
-                    data-tax="14"
-                    data-discount="10"
-                  >
-                    Product A
-                  </option>
-                  <option
-                    data-description="Service package"
-                    data-price="150"
-                    data-tax="14"
-                    data-discount="0"
-                  >
-                    Product B
-                  </option>
-                  <option
-                    data-description="Full vehicle inspection"
-                    data-price="300"
-                    data-tax="14"
-                    data-discount="20"
-                  >
-                    Inspection
-                  </option>
-                </select>
-              </td>
-              <td class="description">-</td>
-              <td>
-                <input
-                  type="number"
-                  value="1"
-                  onchange="recalculateTotal(this)"
-                />
-              </td>
-              <td class="unit-price">-</td>
-              <td class="tax">-</td>
-              <td class="discount">-</td>
-              <td class="total">-</td>
-              <td><input type="checkbox" class="row-select" /></td>
-            </tr>
-          </tbody>
+          <tbody></tbody>
         </table>
         <button onclick="addProductRow()">Add Product / Service</button>
         <button onclick="removeSelectedRows()">Remove Selected</button>
@@ -157,17 +153,20 @@
 
     <section>
       <h2>4️⃣ Payment Methods</h2>
-      <div class="payment-methods">
+      <div>
         <label
           >Payment Method:
-          <select>
+          <select id="payment-method">
             <option>Cash</option>
             <option>Bank Transfer</option>
             <option>Credit / Debit Card</option>
-            <option>Online Payment (PayPal, Vodafone Cash, Fawry, etc.)</option>
-          </select>
-        </label>
-        <label>Amount Paid: <input type="text" /></label>
+            <option>Online Payment</option>
+          </select></label
+        >
+        <label
+          >Amount Paid:
+          <input type="number" id="amount-paid" placeholder="0.00"
+        /></label>
         <button onclick="printInvoice()">Print Payment Receipt</button>
       </div>
     </section>
@@ -178,46 +177,70 @@
     </div>
 
     <script>
+      // Define the base URL for your API server
+      const API_BASE_URL = "http://localhost:3000";
+
+      const loader = document.getElementById("loader");
+      const showLoader = (show) => {
+        loader.style.display = show ? "block" : "none";
+      };
+
       window.onload = function () {
         const carPlate = localStorage.getItem("selectedCarPlate");
-        const customerName = localStorage.getItem("selectedCustomerName");
-
         if (carPlate) {
           document.getElementById("car-plate").value = carPlate.toUpperCase();
         }
-        if (customerName) {
-          document.getElementById("customer-name").value = customerName;
-        }
+        // Set initial state
+        resetForm();
       };
 
       function printInvoice() {
         window.print();
       }
 
-      function updateRow(selectEl) {
-        const row = selectEl.closest("tr");
-        const selected = selectEl.options[selectEl.selectedIndex];
-        const description = selected.dataset.description;
-        const price = parseFloat(selected.dataset.price);
-        const tax = parseFloat(selected.dataset.tax);
-        const discount = parseFloat(selected.dataset.discount);
-        const quantity = row.querySelector('input[type="number"]').value;
+      /**
+       * Clears all form fields and resets the product table.
+       */
+      function resetForm() {
+        // --- Reset Invoice Details ---
+        document.getElementById("invoice-date").valueAsDate = new Date();
+        document.getElementById("due-date").value = "";
+        document.getElementById("order-ref").value = "";
+        document.getElementById("invoice-status").selectedIndex = 0;
+        document.getElementById("internal-ref").value = "";
+        document.getElementById("invoice-notes").value = "";
 
-        row.querySelector(".description").textContent = description;
-        row.querySelector(".unit-price").textContent = `${price} EGP`;
-        row.querySelector(".tax").textContent = `${tax}%`;
-        row.querySelector(".discount").textContent = `${discount} EGP`;
+        // --- Reset Customer Information ---
+        document.getElementById("customer-name").value = "";
+        // We keep the car plate if it was passed from another page
+        // document.getElementById('car-plate').value = '';
+        document.getElementById("customer-phone").value = "";
+        document.getElementById("customer-email").value = "";
+        document.getElementById("billing-address").value = "";
+        document.getElementById("shipping-address").value = "";
+        document.getElementById("tax-id").value = "";
+        document.getElementById("customer-status").value = "";
+        document.getElementById("customer-notes").value = "";
 
-        const total = price * quantity * (1 + tax / 100) - discount;
-        row.querySelector(".total").textContent = `${total.toFixed(2)} EGP`;
+        // --- Reset Products/Services Table ---
+        const tableBody = document.querySelector("#product-table tbody");
+        tableBody.innerHTML = ""; // Clear all existing rows
+        addProductRow(); // Add a single new, blank row
+
+        // --- Reset Payment Methods ---
+        document.getElementById("payment-method").selectedIndex = 0;
+        document.getElementById("amount-paid").value = "";
       }
 
       function recalculateTotal(inputEl) {
         const row = inputEl.closest("tr");
-        const select = row.querySelector("select");
-        if (select.selectedIndex > 0) {
-          updateRow(select);
-        }
+        const quantity = parseFloat(row.querySelector(".quantity").value) || 0;
+        const unitPrice =
+          parseFloat(row.querySelector(".unit-price").value) || 0;
+        const taxPercent = parseFloat(row.querySelector(".tax").value) || 0;
+        const discount = parseFloat(row.querySelector(".discount").value) || 0;
+        const total = quantity * unitPrice * (1 + taxPercent / 100) - discount;
+        row.querySelector(".total").textContent = `${total.toFixed(2)} EGP`;
       }
 
       function addProductRow() {
@@ -225,55 +248,215 @@
         const rowCount = table.rows.length + 1;
         const newRow = document.createElement("tr");
         newRow.innerHTML = `
-        <td>${rowCount}</td>
-        <td>
-          <select onchange="updateRow(this)">
-            <option value="" disabled selected>Select item</option>
-            <option data-description="High-quality item" data-price="100" data-tax="14" data-discount="10">Product A</option>
-            <option data-description="Service package" data-price="150" data-tax="14" data-discount="0">Product B</option>
-            <option data-description="Full vehicle inspection" data-price="300" data-tax="14" data-discount="20">Inspection</option>
-          </select>
-        </td>
-        <td class="description">-</td>
-        <td><input type="number" value="1" onchange="recalculateTotal(this)"></td>
-        <td class="unit-price">-</td>
-        <td class="tax">-</td>
-        <td class="discount">-</td>
-        <td class="total">-</td>
-        <td><input type="checkbox" class="row-select"></td>
-      `;
+            <td class="row-number">${rowCount}</td>
+            <td><input type="text" class="product-name" placeholder="e.g., Oil Change"></td>
+            <td><input type="text" class="description" placeholder="e.g., Synthetic 5W-30"></td>
+            <td><input type="number" class="quantity" value="1" oninput="recalculateTotal(this)"></td>
+            <td><input type="number" class="unit-price" placeholder="0.00" oninput="recalculateTotal(this)"></td>
+            <td><input type="number" class="tax" placeholder="14" oninput="recalculateTotal(this)"></td>
+            <td><input type="number" class="discount" placeholder="0.00" oninput="recalculateTotal(this)"></td>
+            <td class="total">0.00 EGP</td>
+            <td><input type="checkbox" class="row-select"></td>
+        `;
         table.appendChild(newRow);
+        recalculateTotal(newRow.querySelector(".quantity"));
       }
 
       function removeSelectedRows() {
-        const rows = document.querySelectorAll("#product-table tbody tr");
+        const tableBody = document.querySelector("#product-table tbody");
+        const rows = tableBody.querySelectorAll("tr");
+        let rowsRemoved = false;
         rows.forEach((row) => {
           if (row.querySelector(".row-select").checked) {
             row.remove();
+            rowsRemoved = true;
           }
         });
+        if (rowsRemoved) {
+          const remainingRows = tableBody.querySelectorAll("tr");
+          remainingRows.forEach((row, index) => {
+            row.querySelector(".row-number").textContent = index + 1;
+          });
+        }
       }
 
-      function saveInvoice() {
+      async function processResponse(response) {
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          return await response.json();
+        }
+        const errorText = await response.text();
+        throw new Error(
+          `Server returned a non-JSON response: ${response.status} ${response.statusText}. Response body: ${errorText}`
+        );
+      }
+
+      async function saveInvoice() {
+        showLoader(true);
+        try {
+          const customer = await saveCustomer();
+          if (!customer)
+            throw new Error(
+              "Could not save customer. The operation returned no data."
+            );
+
+          const invoice = await createInvoiceRecord(customer.CarPlate);
+          if (!invoice)
+            throw new Error(
+              "Could not create invoice record. The operation returned no data."
+            );
+
+          await saveInvoiceLineItems(invoice.InvoiceId);
+
+          alert("Invoice saved successfully!");
+
+          // --- NEW --- Call the reset function on success
+          resetForm();
+        } catch (error) {
+          console.error("Failed to save the invoice:", error);
+          alert(`Error: ${error.message}`);
+          // On error, we do nothing to the form, leaving the fields filled.
+        } finally {
+          showLoader(false);
+        }
+      }
+
+      async function saveCustomer() {
         const carPlate = document.getElementById("car-plate").value;
-        const customerName = document.getElementById("customer-name").value;
+        if (!carPlate) {
+          alert("Car Plate is required.");
+          return null;
+        }
 
-        // نحصل على أول منتج مختار فقط (أنت تقدر تعدل ده لو عندك أكتر من منتج)
-        const productSelect = document.querySelector("#product-table select");
-        const product =
-          productSelect && productSelect.selectedIndex > 0
-            ? productSelect.options[productSelect.selectedIndex].text
-            : "";
-
-        const technicianData = {
-          carPlate,
-          customerName,
-          product,
+        const customerData = {
+          CarPlate: carPlate,
+          Name: document.getElementById("customer-name").value,
+          PhoneNumber: document.getElementById("customer-phone").value,
+          Email: document.getElementById("customer-email").value,
+          BillingAddress: document.getElementById("billing-address").value,
+          ShippingAddress: document.getElementById("shipping-address").value,
+          TaxIdentificationNumber: document.getElementById("tax-id").value,
+          Status: document.getElementById("customer-status").value,
         };
 
-        localStorage.setItem("technicianData", JSON.stringify(technicianData));
-        window.location.href =
-          "/pages/WorkShop/Add Information For The Technician.html";
+        const getResponse = await fetch(
+          `${API_BASE_URL}/api/customers/${carPlate}`
+        );
+        let method, url;
+
+        if (getResponse.status === 404) {
+          method = "POST";
+          url = "/api/customers";
+        } else if (getResponse.ok) {
+          method = "PUT";
+          url = `/api/customers/${carPlate}`;
+        } else {
+          throw new Error(
+            `Failed to check for existing customer. Status: ${getResponse.status}`
+          );
+        }
+
+        const response = await fetch(`${API_BASE_URL}${url}`, {
+          method: method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(customerData),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.text();
+          throw new Error(
+            `Customer Save Failed: ${response.statusText}. Details: ${errorData}`
+          );
+        }
+
+        return await processResponse(response);
+      }
+
+      async function createInvoiceRecord(carPlate) {
+        const invoiceData = {
+          CarPlate: carPlate,
+          InvoiceDate: document.getElementById("invoice-date").value,
+          DueDate: document.getElementById("due-date").value,
+          OrderReference: document.getElementById("order-ref").value,
+          Status: document.getElementById("invoice-status").value,
+          InternalReference: document.getElementById("internal-ref").value,
+          InvoiceNotes: document.getElementById("invoice-notes").value,
+          AdditionalNotes: document.getElementById("customer-notes").value,
+          PaymentMethod: document.getElementById("payment-method").value,
+          AmountPaid:
+            parseFloat(document.getElementById("amount-paid").value) || 0,
+        };
+
+        const response = await fetch(`${API_BASE_URL}/api/invoices`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(invoiceData),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.text();
+          throw new Error(
+            `Invoice Creation Failed: ${response.statusText}. Details: ${errorData}`
+          );
+        }
+        return await processResponse(response);
+      }
+
+      async function saveInvoiceLineItems(invoiceId) {
+        const productRows = document.querySelectorAll(
+          "#product-table tbody tr"
+        );
+
+        for (const row of productRows) {
+          const serviceName = row.querySelector(".product-name").value;
+          if (!serviceName) continue;
+
+          const serviceData = {
+            Name: serviceName,
+            Description: row.querySelector(".description").value,
+            Price: parseFloat(row.querySelector(".unit-price").value) || 0,
+            Tax: parseFloat(row.querySelector(".tax").value) || 0,
+            Discount: parseFloat(row.querySelector(".discount").value) || 0,
+          };
+
+          const serviceResponse = await fetch(`${API_BASE_URL}/api/services`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(serviceData),
+          });
+
+          if (!serviceResponse.ok) {
+            const errorData = await serviceResponse.text();
+            throw new Error(
+              `Failed to create service '${serviceData.Name}': ${serviceResponse.statusText}. Details: ${errorData}`
+            );
+          }
+          const newService = await processResponse(serviceResponse);
+
+          const invoiceServiceData = {
+            InvoiceId: invoiceId,
+            ServiceId: newService.ServiceId,
+            Quantity: parseInt(row.querySelector(".quantity").value) || 1,
+            UnitPrice: parseFloat(row.querySelector(".unit-price").value) || 0,
+          };
+
+          const invoiceServiceResponse = await fetch(
+            `${API_BASE_URL}/api/invoiceServices`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(invoiceServiceData),
+            }
+          );
+
+          if (!invoiceServiceResponse.ok) {
+            const errorData = await invoiceServiceResponse.text();
+            throw new Error(
+              `Failed to link service to invoice: ${invoiceServiceResponse.statusText}. Details: ${errorData}`
+            );
+          }
+          await processResponse(invoiceServiceResponse);
+        }
       }
     </script>
   </body>
