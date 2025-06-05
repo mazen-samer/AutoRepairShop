@@ -8,6 +8,7 @@ const Invoice = require("./Invoice");
 const InvoiceService = require("./InvoiceService");
 const Instruction = require("./Instruction"); // Assume you created this file
 const Feedback = require("./Feedback"); // Assume you created this file
+const User = require("./User"); // <<< ADD THIS LINE
 
 // 1-to-Many: Customer -> Invoice
 Customer.hasMany(Invoice, { foreignKey: "CarPlate", sourceKey: "CarPlate" });
@@ -67,4 +68,5 @@ module.exports = {
   InvoiceService,
   Instruction,
   Feedback,
+  User,
 };

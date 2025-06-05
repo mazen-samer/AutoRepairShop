@@ -11,6 +11,7 @@ const invoicesRouter = require("./routes/invoices");
 const feedbackRouter = require("./routes/feedback");
 const invoiceServicesRouter = require("./routes/invoiceServices");
 const instructionsRouter = require("./routes/instructions");
+const authRouter = require("./routes/auth"); // <<< ADD THIS LINE
 
 app.use(cors());
 app.use(express.json());
@@ -21,7 +22,7 @@ app.use("/api/invoices", invoicesRouter);
 app.use("/api/feedback", feedbackRouter);
 app.use("/api/invoiceServices", invoiceServicesRouter);
 app.use("/api/instructions", instructionsRouter);
-
+app.use("/api/auth", authRouter); // <<< ADD THIS LINE
 
 const start = async () => {
   try {
@@ -32,7 +33,7 @@ const start = async () => {
     );
 
     // IMPORTANT: Since your tables already exist, we don't need sequelize.sync()
-
+    // await sequelize.sync();
     // Start the Express server only after the DB connection is successful
     app.listen(port, () => {
       console.log(`🚀 Server is listening on port ${port}`);
